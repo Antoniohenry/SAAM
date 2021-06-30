@@ -24,6 +24,7 @@ public class Graph implements IGraph {
         nodes = new HashMap<>();
         edges = new HashMap<>();
 
+
         if(test){
             createTest();
         }
