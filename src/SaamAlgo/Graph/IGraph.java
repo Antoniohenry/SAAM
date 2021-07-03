@@ -12,17 +12,17 @@ public interface IGraph {
      @param runway The exit point (Node) ie a runway
      @return a Route such as specified in IRoute
      */
-    public Route getRoute(Node entry, Node runway);
+    Route getRoute(Node entry, Node runway);
 
     /**
      Add an aircraft to the graph, to the Nodes and Edges specified in aircraft.getRoute()
      @param aircraft : the aircraft to add
      */
-    public void addAircraft(@NotNull Aircraft aircraft);
+    void addAircraft(@NotNull Aircraft aircraft);
 
     /**
      Remove an aircraft to the graph, to the Nodes and Edges specified in aircraft.getRoute()
      @param aircraft : the aircraft to remove
      */
-    public void removeAircraft(Aircraft aircraft);
+    void removeAircraft(Aircraft aircraft);
 }

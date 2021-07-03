@@ -3,11 +3,10 @@ package SaamAlgo.Graph.Edge;
 import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Graph.KeyError;
-import SaamAlgo.Graph.Node.NodeConflict;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Operations.Constants;
 
-import java.util.ListIterator;
 import java.util.TreeMap;
 
 public class Edge {
@@ -59,8 +58,9 @@ public class Edge {
     }
 
     public void addFlyingAircraft(Aircraft aircraft, double entryTime){ //entryTime
-        double exitTime = entryTime + (length / aircraft.getSpeed());
+        double exitTime = entryTime + (length / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
         IFlight flight = new EdgeFlight(entryTime, exitTime, aircraft);
+
         IFlight resultIn = flyingAircraftsIn.put(entryTime, flight);
         IFlight resultOut = flyingAircraftsOut.put(exitTime, flight);
         if(resultIn == null && resultOut == null) {

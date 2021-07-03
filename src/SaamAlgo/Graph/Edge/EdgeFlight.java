@@ -41,7 +41,7 @@ public class EdgeFlight implements IFlight {
                 }
 
             }
-            distance = deltaTime * aircraft.getSpeed();
+            distance = deltaTime * Constants.SEC_TO_HOURS  * aircraft.getSpeed();
         } else {
             //other arrive in first
             separation = Constants.TABLE_SEPARATION[other.getAircraft().getVortexCat()][aircraft.getVortexCat()];
@@ -58,7 +58,7 @@ public class EdgeFlight implements IFlight {
                 }
 
             }
-            distance = deltaTime * other.getAircraft().getSpeed();
+            distance = deltaTime * Constants.SEC_TO_HOURS * other.getAircraft().getSpeed();
         }
 
         double criticize = 0;

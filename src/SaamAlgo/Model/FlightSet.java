@@ -1,11 +1,12 @@
 package SaamAlgo.Model;
 
 import SaamAlgo.Graph.Graph;
-import SaamAlgo.Operations.IAgent;
-import SaamAlgo.Operations.IOperations;
-import SaamAlgo.Operations.IState;
-import SaamAlgo.Operations.IStatePerformance;
+import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Operations.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class FlightSet implements IState, IOperations {
@@ -18,30 +19,77 @@ public class FlightSet implements IState, IOperations {
     Comparator<Aircraft> comparator = Comparator.comparing(Aircraft::getReward);
 
     public FlightSet() {
-
-        Boolean test = true;
-
-        this.graph = new Graph(test);
+        this.graph = new Graph();
         this.aircrafts = new ArrayList<>();
 
-        if(test){
-            setUptest();
-        }
+        getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
+        getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
 
         worstReward = getWorstReward();
 
     }
 
-    public void setUptest(){
-        Aircraft a1 = new Aircraft(graph, "1", 101, 1.01, Aircraft.vortexCat.LIGHT, graph.lEntry(), graph.lRunway());
-        Aircraft a2 = new Aircraft(graph, "2", 100, 1.0, Aircraft.vortexCat.MEDIUM, graph.rEntry(), graph.rRunway());
-        Aircraft a3 = new Aircraft(graph, "3", 100, 1.02, Aircraft.vortexCat.LIGHT, graph.lEntry(), graph.rRunway());
+    private void getFlightSetFromFile(String filename){
+        Random random = new Random(123);
+        String line;
 
-        aircrafts.add(a1);
-        aircrafts.add(a2);
-        aircrafts.add(a3);
+        System.out.println("Loading flights...");
+        try {
+            FileReader flightsFile = new FileReader(filename);
+            BufferedReader flightsFileInput = new BufferedReader(flightsFile);
+
+            while ((line = flightsFileInput.readLine()) != null){
+                StringTokenizer tokenizer = new StringTokenizer(line);
+                String ICAO = tokenizer.nextToken();
+                String callsign = tokenizer.nextToken();// AF0315 etc...
+                String aircraftType = tokenizer.nextToken(); // B737 A330 etc...
+                int vortexCat = Integer.parseInt(tokenizer.nextToken());// 0-Small 1-Medium 2-Large
+                tokenizer.nextToken();// pour visualisation xtraj ??
+                String gate = tokenizer.nextToken();
+                int rwy = Integer.parseInt(tokenizer.nextToken());
+                double entryTime = Double.parseDouble(tokenizer.nextToken()); //in seconds
+                // adding an hour to each aircraft in order to be sure that no one have a negative entry time
+                // adding random seconds to avoid having the same key in treemaps
+                entryTime = entryTime + 3600 + 0.1  * random.nextDouble();
+                int entryNodeNumber = Integer.parseInt(tokenizer.nextToken());
+                double speedIn = Double.parseDouble(tokenizer.nextToken());
+                double realLandingTime = Double.parseDouble(tokenizer.nextToken());
+
+                Node entryNode = graph.getEntryNode(entryNodeNumber);
+
+                Aircraft.vortexCat category;
+                switch (vortexCat) {
+                    case 0:
+                        category = Aircraft.vortexCat.LIGHT;
+                        break;
+                    case 1:
+                        category = Aircraft.vortexCat.MEDIUM;
+                        break;
+                    case 2:
+                        category = Aircraft.vortexCat.HEAVY;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value for wake vortex category " + vortexCat);
+                }
+
+                Node runway;
+                switch (rwy){
+                    case 1 : runway = graph.getRunway("RWY_27R"); break;
+                    case 2 : runway = graph.getRunway("RWY_26L"); break;
+                    default:
+                        throw new IllegalStateException("Unexpected value for runway: " + rwy);
+                }
+
+                aircrafts.add(new Aircraft(graph, callsign, (int) speedIn, entryTime, category, entryNode, runway));
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
+
 
     private double getWorstReward(){
         aircrafts.sort(comparator.reversed());
@@ -86,11 +134,10 @@ public class FlightSet implements IState, IOperations {
 
     public List<IAgent> getWorstAgents(double threshold){ // in %
         worstReward = getWorstReward();
-        System.out.println("worstReward = " + worstReward);
         aircrafts.sort(comparator.reversed());
         LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
         for (Aircraft aircraft : aircrafts){
-            if(aircraft.getReward() < threshold * worstReward){
+            if(aircraft.getReward() >= threshold * worstReward){
                 criticalFlightSet.add(aircraft);
             }
         }
@@ -102,4 +149,11 @@ public class FlightSet implements IState, IOperations {
         return new FlightSetPerformance(this);
     }
 
+    @Override
+    public String toString() {
+        return "FlightSet{" +
+                "aircrafts=" + aircrafts +
+                ", worstReward=" + worstReward +
+                '}';
+    }
 }

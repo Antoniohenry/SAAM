@@ -1,6 +1,5 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Operations.IState;
 import SaamAlgo.Operations.IStatePerformance;
 
 public class FlightSetPerformance implements IStatePerformance {

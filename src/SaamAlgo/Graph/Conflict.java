@@ -1,6 +1,6 @@
 package SaamAlgo.Graph;
 
-import SaamAlgo.Graph.Node.NodeFlight;
+import SaamAlgo.Operations.Constants;
 
 public abstract class Conflict implements IConflict{
 
@@ -14,7 +14,7 @@ public abstract class Conflict implements IConflict{
         this.flight1 = flight1;
         this.flight2 = flight2;
         this.name = name;
-        this.reward = criticize;
+        this.reward = criticize * Constants.conflictReward;
 
     }
 

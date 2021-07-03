@@ -2,9 +2,6 @@ package SaamAlgo.Graph;
 
 import SaamAlgo.Model.Aircraft;
 
-import SaamAlgo.Graph.Node.NodeFlight;
-import SaamAlgo.Model.Aircraft;
-
 public interface IFlight {
 
     /**
@@ -19,25 +16,25 @@ public interface IFlight {
      @param other : the other flight
      @param conflict : the conflict
      */
-    public void addConflict(IFlight other, IConflict conflict);
+    void addConflict(IFlight other, IConflict conflict);
 
     /**
     get the entryTime of the aircraft on the nodeEntry
      @return time in hours
      */
-    public double getEntryTime();
+    double getEntryTime();
 
     /**
      get the aircraft in this flight
      @return a Aircraft
      */
-    public Aircraft getAircraft();
+    Aircraft getAircraft();
 
     /**
      get the exitTime of the aircraft on a runway
      @return time in hours
      */
-    public double getExitTime();
+    double getExitTime();
 
 
 

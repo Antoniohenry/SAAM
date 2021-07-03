@@ -1,7 +1,5 @@
 package SaamAlgo.Operations;
 
-import SaamAlgo.Model.FlightSet;
-
 import java.util.List;
 
 public interface IState {

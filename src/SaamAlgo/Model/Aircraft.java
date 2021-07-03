@@ -21,13 +21,13 @@ public class Aircraft implements IAgent {
     public enum vortexCat{HEAVY, MEDIUM, LIGHT}
 
     private final String id;
-    private int speed;
+    private double speed;
     private Route route;
-    private double timeIn; // in hours
-    private final double rta; // in hours
+    private double timeIn; // in seconds
+    private final double rta; // in seconds
     private int vortexCat;
     private final Node preferedRumway;
-    private double timeInArc;
+    private double timeInArc; //in secs
     private Decision decision;
     private final Graph graph;
     private final Node entry;
@@ -43,6 +43,12 @@ public class Aircraft implements IAgent {
         this.graph = graph;
         this.entry = entry;
 
+        switch (vortexCat){
+            case HEAVY: this.vortexCat = 2;break;
+            case MEDIUM: this.vortexCat = 1;break;
+            case LIGHT: this.vortexCat = 0;break;
+        }
+
         this.id = id;
         this.decision = decision;
         this.speed = speed;
@@ -51,26 +57,21 @@ public class Aircraft implements IAgent {
         this.preferedRumway =runway;
         this.route = graph.getRoute(entry, runway);
 
-        this.rta = timeIn + route.getFlyingTime(speed);
-
-        switch (vortexCat){
-            case HEAVY: this.vortexCat = 2;break;
-            case MEDIUM: this.vortexCat = 1;break;
-            case LIGHT: this.vortexCat = 0;break;
-        }
+        this.rta = timeIn + route.getFlyingTime(this); // in seconds
 
         setNewDecision(decision);
     }
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, vortexCat vortexCat, Node entry, Node runway){
-        this(graph, id, speed, timeIn, vortexCat, entry, runway, new Decision(3, 0, runway, Constants.standardTimeInArc));
+        this(graph, id, speed, timeIn, vortexCat, entry, runway, Decision.getNeutralDecision(vortexCat));
     }
+
 
     public void removeDecision(){
         removeAircraftFromGraph();
 
-        speed -= decision.getDeltaV();
-        timeIn -= (decision.getDelatTIn() / 60.); // to convert mins to hours
+        speed = Constants.nominalApproachSpeed;
+        timeIn -= decision.getDeltaTIn(); // in seconds
         route = graph.getRoute(entry, preferedRumway);
         timeInArc = Constants.standardTimeInArc;
 
@@ -99,12 +100,11 @@ public class Aircraft implements IAgent {
 
     private void setNewDecision(IDecision decision){
         Decision newDecision = (Decision) decision;
-        newDecision.setAircraft(this);
 
-        speed += newDecision.getDeltaV();
-        timeIn += (newDecision.getDelatTIn() / 60.); // to convert mins to hours
-        route = graph.getRoute(entry, newDecision.getRunway());
-        timeInArc = newDecision.getDeltaT();
+        speed = newDecision.getSpeed();
+        timeIn += newDecision.getDeltaTIn(); // in seconds
+        route = graph.getRoute(entry, graph.getADifferentRunway(preferedRumway));
+        timeInArc = newDecision.getTimeInMP();
 
         this.decision = newDecision;
         this.graph.addAircraft(this);
@@ -124,7 +124,7 @@ public class Aircraft implements IAgent {
         return route.getRoute();
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -143,9 +143,9 @@ public class Aircraft implements IAgent {
             reward += edgeConflict.getReward();
         }
 
-        double rtaReward = Math.abs(rta - getTimeOnRunway()) * 60 * Constants.rtaReward;
+        double rtaReward = Math.abs(rta - getTimeOnRunway()) / 60 * Constants.rtaReward; // in mins
 
-        if(!decision.getRunway().equals(preferedRumway) ){
+        if(decision.isRunwayChanged()){
             reward += Constants.runwayReward;
         }
 
@@ -219,7 +219,18 @@ public class Aircraft implements IAgent {
     }
 
     public double getTimeOnRunway(){
-        return timeIn + route.getFlyingTime(speed);
+        return timeIn + route.getFlyingTime(this); //in seconds
+    }
+
+    public double getFinalSpeed(){
+        double speed;
+        switch (vortexCat){
+            case 2 : speed = Constants.nominalLandingSpeedH; break;
+            case 1 : speed = Constants.nominalLandingSpeedM; break;
+            default:
+                throw new IllegalStateException("Unexpected value for wake vortex cat: " + vortexCat);
+        }
+        return speed;
     }
 
     public String printReward(){
@@ -238,11 +249,11 @@ public class Aircraft implements IAgent {
             reward += edgeConflict.getReward();
         }
 
-        double rtaReward = Math.abs(rta - getTimeOnRunway() ) * 60 * Constants.rtaReward;
+        double rtaReward = Math.abs(rta - getTimeOnRunway() ) / 60 * Constants.rtaReward; //in mins
         result.append("; rta ").append(df.format(rtaReward));
         reward +=rtaReward;
 
-        if(!decision.getRunway().equals(preferedRumway) ){
+        if(decision.isRunwayChanged()){
             result.append("; not preferredRunway ").append(Constants.runwayReward);
             reward += Constants.runwayReward;
         }
@@ -276,6 +287,7 @@ public class Aircraft implements IAgent {
                 ", reward=" + getReward() +
                 ", vortexCat=" + vortexCat +
                 ", timeInArc=" + timeInArc +
+                ", routes=" + route +
                 '}';
     }
 }

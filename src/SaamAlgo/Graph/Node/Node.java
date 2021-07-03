@@ -14,8 +14,8 @@ public class Node extends Point {
     private final List<Node> edges;
     private final TreeMap<java.lang.Double, NodeFlight> flyingAircrafts;
 
-    public Node(int x, int y, String name) {
-        super(x, y);
+    public Node(double x, double y, String name) {
+        super((int) x, (int) y);
         this.name = name;
         this.edges = new ArrayList<>();
         this.flyingAircrafts = new TreeMap<>();
@@ -31,13 +31,14 @@ public class Node extends Point {
 
     public void addAircraft(Aircraft aircraft, double time){
         IFlight result;
+
         result = flyingAircrafts.put(time, new NodeFlight(time, aircraft));
         if(result == null) {
             computeConflictAndSetReward(time);
         }else{
-            System.out.println("result = " + result);
-            throw new KeyError("The key already exists in the treemap");
+            throw new KeyError("The key already exists in the treemap : " + result);
         }
+
     }
 
     public void removeAircraft(double time){

@@ -11,12 +11,12 @@ public class NodeFlight implements IFlight {
     private final double exitTime;
 
     public NodeFlight(double time, Aircraft aircraft) {
-        this.entryTime = time - Constants.nodeRadius /aircraft.getSpeed();
+        this.entryTime = time - (Constants.nodeRadius /aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
         if(entryTime < 0){
             throw new Error("Negative entryTime, need an offset on the beginning of simulation ");
         }
         this.aircraft = aircraft;
-        this.exitTime = time + Constants.nodeRadius /aircraft.getSpeed();
+        this.exitTime = time + (Constants.nodeRadius / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class NodeFlight implements IFlight {
                 }
 
             }
-            distance = deltaTime * aircraft.getSpeed();
+            distance = deltaTime * Constants.SEC_TO_HOURS * aircraft.getSpeed();
         } else {
             //other arrive in first
             if (other.getAircraft().getSpeed() > aircraft.getSpeed()) {
@@ -59,7 +59,7 @@ public class NodeFlight implements IFlight {
                 }
 
             }
-            distance = deltaTime * other.getAircraft().getSpeed();
+            distance = deltaTime * Constants.SEC_TO_HOURS * other.getAircraft().getSpeed();
         }
 
         double criticize = 0;
@@ -130,7 +130,7 @@ public class NodeFlight implements IFlight {
     @Override
     public String toString() {
         return "Flight{" +
-                "time" + entryTime +
+                "time" + (entryTime + exitTime) / 2 +
                 ", aircraft=" + aircraft.getId() +
                 '}';
     }

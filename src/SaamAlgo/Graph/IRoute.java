@@ -1,6 +1,8 @@
 package SaamAlgo.Graph;
 
 import SaamAlgo.Graph.Edge.Edge;
+import SaamAlgo.Model.Aircraft;
+import SaamAlgo.Operations.IAgent;
 
 import java.util.List;
 
@@ -10,12 +12,12 @@ public interface IRoute {
      Get list of Edges of the route (useful to iterate on this route)
      @return List of Edges composing the route (preferably a linkedList to iterate)
      */
-    public List<Edge> getRoute();
+    List<Edge> getRoute();
 
     /**
      Get the flying time of the route
-     @param speed The aircraft speed without the speed in the final leg (after merge point)
+     @param aircraft : the aircraft flying
      @return flying time in hours
      */
-    public double getFlyingTime(int speed); //in kts
+    double getFlyingTime(Aircraft aircraft);
 }

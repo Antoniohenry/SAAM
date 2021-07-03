@@ -6,10 +6,6 @@ public interface IDecision {
         return null;
     }
 
-    IAgent getAgent();
-
     IDecision getNeighbour();
-
-    IDecision getNeighbour(double temperature);
 
 }
