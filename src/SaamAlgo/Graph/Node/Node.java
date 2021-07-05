@@ -12,7 +12,7 @@ public class Node extends Point {
 
     private final String name;
     private final List<Node> edges;
-    private final TreeMap<java.lang.Double, NodeFlight> flyingAircrafts;
+    private final TreeMap<java.lang.Double, IFlight> flyingAircrafts;
 
     public Node(double x, double y, String name) {
         super((int) x, (int) y);
@@ -48,7 +48,7 @@ public class Node extends Point {
         }
     }
 
-    public TreeMap<java.lang.Double, NodeFlight> getFlyingAircrafts() {
+    public TreeMap<java.lang.Double, IFlight> getFlyingAircrafts() {
         return flyingAircrafts;
     }
 

@@ -7,6 +7,7 @@ import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Node.Node;
 import SaamAlgo.Operations.Constants;
 
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class Edge {
@@ -79,7 +80,7 @@ public class Edge {
             throw new KeyError("Try to remove a key that doesn't exist :" + entryTime);
         }
         else {
-            double exitTime = flightIn.getExitTime();
+            double exitTime = flightIn.getExitTime(Optional.empty());
             IFlight flightOut = flyingAircraftsOut.remove(exitTime);
             if(flightOut == null) {
                 throw new KeyError("Try to remove a key that doesn't exist :" + exitTime);

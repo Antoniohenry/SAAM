@@ -2,7 +2,6 @@ package SaamAlgo.Operations;
 
 public class Constants {
 
-    public static double nodeRadius = 2.2; //nm
     public static double rtaReward = 0.1; //en point de reward par minute de retard ou d'avance
 
     public static double overtakingReward = 3; //reward penalty en cas d'overtaking

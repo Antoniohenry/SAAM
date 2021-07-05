@@ -2,6 +2,8 @@ package SaamAlgo.Graph;
 
 import SaamAlgo.Model.Aircraft;
 
+import java.util.Optional;
+
 public interface IFlight {
 
     /**
@@ -22,7 +24,7 @@ public interface IFlight {
     get the entryTime of the aircraft on the nodeEntry
      @return time in hours
      */
-    double getEntryTime();
+    double getEntryTime(Optional<Double> radius);
 
     /**
      get the aircraft in this flight
@@ -34,7 +36,7 @@ public interface IFlight {
      get the exitTime of the aircraft on a runway
      @return time in hours
      */
-    double getExitTime();
+    double getExitTime(Optional<Double> radius);
 
 
 
