@@ -66,13 +66,6 @@ public class EdgeFlight implements IFlight {
         double criticize = 0;
         if(distance < separation) {
             criticize = distance / separation;
-
-            if (criticize > 1 || criticize < 0) {
-                System.out.println("criticize = " + criticize + "Not between 0 and 1");
-                System.out.println("other = " + other);
-                System.out.println("this = " + this);
-                //TODO reproduire cette erreur
-            }
         }
 
         if(criticize < 0 || criticize > 1){

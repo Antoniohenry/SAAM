@@ -17,7 +17,7 @@ public class Recuit implements IAnnealing {
         while(temperature > finalTemperature){
             for(int i = 0; i < iterations; i++) {
                 List<IAgent> worstAgents = state.getWorstAgents(0.3);
-                System.out.println("number of aircrafts handled " + worstAgents.size());
+                //System.out.println("number of aircrafts handled " + worstAgents.size());
                 for (IAgent agent : worstAgents) {
                     IDecision decision = agent.getDecision();
                     double oldReward = agent.getReward();
