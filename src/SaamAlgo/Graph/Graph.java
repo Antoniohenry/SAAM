@@ -149,7 +149,7 @@ public class Graph implements IGraph {
     public void addAircraft(@NotNull Aircraft aircraft){
         double time = aircraft.getTimeIn();
         aircraft.getEntry().addAircraft(aircraft, time); //ajout de l'avion au point d'entré
-        for(Edge edge : aircraft.getRoute()){
+        for(Edge edge : aircraft.getRoute().getEdges()){
             edge.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tout les points du parcours sauf l'entré
             time += edge.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
             edge.getExitNode().addAircraft(aircraft, time);
@@ -159,7 +159,7 @@ public class Graph implements IGraph {
     public void removeAircraft(Aircraft aircraft){
         double time= aircraft.getTimeIn();
         aircraft.getEntry().removeAircraft(time);
-        for(Edge edge : aircraft.getRoute()){
+        for(Edge edge : aircraft.getRoute().getEdges()){
             edge.removeAircraft(time);
             time += edge.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC;
             edge.getExitNode().removeAircraft(time);

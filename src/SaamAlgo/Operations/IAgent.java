@@ -8,6 +8,10 @@ public interface IAgent {
 
     double getReward();
 
+    int getEdgeConflictNumber();
+
+    int getNodeConflictNumber();
+
     void setReward();
 
     IDecision getDecision();

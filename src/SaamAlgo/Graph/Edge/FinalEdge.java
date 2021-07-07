@@ -13,14 +13,14 @@ public class FinalEdge extends Edge{
     @Override
     public void addFlyingAircraft(Aircraft aircraft, double entryTime){
 
-        double exitTime = entryTime + (getLength() / aircraft.getFinalSpeed()) * Constants.HOURS_TO_SEC + aircraft.getTimeInArc();
+        double exitTime = entryTime + (getLength() / aircraft.getLandingSpeed()) * Constants.HOURS_TO_SEC + aircraft.getTimeInArc();
         EdgeFlight flight = new EdgeFlight(entryTime, exitTime, aircraft);
         getFlyingAircraftsIn().put(entryTime, flight);
         getFlyingAircraftsOut().put(exitTime, flight);
     }
 
-    public double getLength(Aircraft aircraft){
-        return super.getLength() + aircraft.getFinalSpeed() * Constants.standardTimeInArc * Constants.SEC_TO_HOURS;
+    public double getLength(double landingSpeed){
+        return super.getLength() + landingSpeed * Constants.standardTimeInArc * Constants.SEC_TO_HOURS;
     }
 
 

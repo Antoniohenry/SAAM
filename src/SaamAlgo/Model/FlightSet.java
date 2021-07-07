@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FlightSet implements IState, IOperations {
 
@@ -25,9 +26,10 @@ public class FlightSet implements IState, IOperations {
         getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
         getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
 
-        worstReward = getWorstReward();
+        this.performance = new FlightSetPerformance(this);
 
     }
+
 
     private void getFlightSetFromFile(String filename){
         Random random = new Random(123);
@@ -50,10 +52,10 @@ public class FlightSet implements IState, IOperations {
                 double entryTime = Double.parseDouble(tokenizer.nextToken()); //in seconds
                 // adding an hour to each aircraft in order to be sure that no one have a negative entry time
                 // adding random seconds to avoid having the same key in treemaps
-                entryTime = entryTime + 3600 + 0.1  * random.nextDouble();
+                entryTime = entryTime + Constants.offsetTimeStartingTheSimulation + 0.1  * random.nextDouble();
                 int entryNodeNumber = Integer.parseInt(tokenizer.nextToken());
                 double speedIn = Double.parseDouble(tokenizer.nextToken());
-                double realLandingTime = Double.parseDouble(tokenizer.nextToken());
+                double realLandingTime = Double.parseDouble(tokenizer.nextToken()) + Constants.offsetTimeStartingTheSimulation;
 
                 Node entryNode = graph.getEntryNode(entryNodeNumber);
 
@@ -80,7 +82,9 @@ public class FlightSet implements IState, IOperations {
                         throw new IllegalStateException("Unexpected value for runway: " + rwy);
                 }
 
-                aircrafts.add(new Aircraft(graph, callsign, (int) speedIn, entryTime, category, entryNode, runway));
+                if(entryNode.getName().equals("OKIPA") || entryNode.getName().equals("LORNI")){
+                    aircrafts.add(new Aircraft(graph, callsign, (int) speedIn, entryTime, realLandingTime, category, entryNode, runway));
+                }
 
             }
 
@@ -91,52 +95,24 @@ public class FlightSet implements IState, IOperations {
     }
 
 
-    private double getWorstReward(){
-        aircrafts.sort(comparator.reversed());
-        return aircrafts.get(0).getReward();
-    }
 
-    public ArrayList<Aircraft> getAircrafts() {
+
+    public List<Aircraft> getAircrafts() {
         return aircrafts;
     }
 
-    public int getEdgeConflictNumber(){
-        int nb = 0;
-        for(Aircraft aircraft : aircrafts){
-            nb += aircraft.getEdgeConflictNumber();
-        }
-        return nb / 2; //chaque conflit est compte sur deux avions
-    }
 
-    public double getTotalDelay(){
-        double delay = 0;
-        for(Aircraft aircraft : aircrafts){
-            delay += Math.abs(aircraft.getRta() - aircraft.getTimeOnRunway());
-        }
-        return delay;
-    }
 
-    public int getNodeConflictNumber(){
-        int nb = 0;
-        for(Aircraft aircraft : aircrafts){
-            nb += aircraft.getNodeConflictNumber();
-        }
-        return nb / 2; //chaque conflit est compte sur deux avions
-    }
+    public List<IAgent> getAgentsToHandled(double threshold, double SWStartingTime, double SWEndingTime){ // in %
 
-    public double getFlightSetReward(){
-        double reward = 0.;
-        for(Aircraft aircraft : aircrafts){
-            reward += aircraft.getReward();
+        List<Aircraft> aircraftInSW = getAircraftInSW(SWStartingTime, SWEndingTime);
+        if(aircraftInSW.size() == 0){
+            return new LinkedList<>();
         }
-        return reward;
-    }
-
-    public List<IAgent> getWorstAgents(double threshold){ // in %
-        worstReward = getWorstReward();
-        aircrafts.sort(comparator.reversed());
+        worstReward = performance.getWorstReward(aircraftInSW);
+        aircraftInSW.sort(comparator.reversed());
         LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
-        for (Aircraft aircraft : aircrafts){
+        for (Aircraft aircraft : aircraftInSW){
             if(aircraft.getReward() >= threshold * worstReward){
                 criticalFlightSet.add(aircraft);
             }
@@ -144,10 +120,16 @@ public class FlightSet implements IState, IOperations {
         return criticalFlightSet;
     }
 
+    private List<Aircraft> getAircraftInSW(double start, double end){
+        return aircrafts.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE || aircraft.getStatus(start, end) == SlidingWindowParameters.status.ONGOING ).collect(Collectors.toList());
+    }
+
     @Override
     public IStatePerformance stateEvaluation() {
-        return new FlightSetPerformance(this);
+        performance = new FlightSetPerformance(this);
+        return performance;
     }
+
 
     @Override
     public String toString() {

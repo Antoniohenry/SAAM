@@ -14,6 +14,6 @@ public interface IState {
      */
     IStatePerformance stateEvaluation();
 
-    List<IAgent> getWorstAgents(double threshold);
+    List<IAgent> getAgentsToHandled(double threshold, double SWStartingTime, double SWEndingTime);
 
 }

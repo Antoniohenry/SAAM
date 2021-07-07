@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Random;
 
 //TODO made a copy before changes
-public class Recuit implements IAnnealing {
+public class Annealing implements IAnnealing {
 
-    public Recuit() {
+    public Annealing() {
         IState state = IOperations.preProcessing();
         double temperature = heating(state);
         double finalTemperature = temperature / 6000;
@@ -16,7 +16,7 @@ public class Recuit implements IAnnealing {
 
         while(temperature > finalTemperature){
             for(int i = 0; i < iterations; i++) {
-                List<IAgent> worstAgents = state.getWorstAgents(0.3);
+                List<IAgent> worstAgents = state.getAgentsToHandled(0.3, 0, 25 * 3600 );
                 //System.out.println("number of aircrafts handled " + worstAgents.size());
                 for (IAgent agent : worstAgents) {
                     IDecision decision = agent.getDecision();

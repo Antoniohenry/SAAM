@@ -1,7 +1,6 @@
 package SaamAlgo.Model;
 
 import SaamAlgo.Operations.Constants;
-import SaamAlgo.Graph.Edge.Edge;
 import SaamAlgo.Graph.Graph;
 import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.Node.Node;
@@ -26,7 +25,7 @@ public class Aircraft implements IAgent {
     private double timeIn; // in seconds
     private final double rta; // in seconds
     private int vortexCat;
-    private final Node preferedRumway;
+    private final Node preferredRunway;
     private double timeInArc; //in secs
     private Decision decision;
     private final Graph graph;
@@ -36,7 +35,9 @@ public class Aircraft implements IAgent {
     private final List<IConflict> nodeConflicts;
     private final List<IConflict> edgeConflicts;
 
-    public Aircraft(Graph graph, String id, int speed, double timeIn, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
+    private final SlidingWindowParameters SWParameters;
+
+    public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
         nodeConflicts = new LinkedList<>();
         edgeConflicts = new LinkedList<>();
 
@@ -54,16 +55,18 @@ public class Aircraft implements IAgent {
         this.speed = speed;
         this.timeIn = timeIn;
 
-        this.preferedRumway =runway;
+        this.preferredRunway =runway;
         this.route = graph.getRoute(entry, runway);
 
-        this.rta = timeIn + route.getFlyingTime(this); // in seconds
+        this.rta = rta; // in seconds
+
+        this.SWParameters = SlidingWindowParameters.getInstance(this);
 
         setNewDecision(decision);
     }
 
-    public Aircraft(Graph graph, String id, int speed, double timeIn, vortexCat vortexCat, Node entry, Node runway){
-        this(graph, id, speed, timeIn, vortexCat, entry, runway, Decision.getNeutralDecision(vortexCat));
+    public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway){
+        this(graph, id, speed, timeIn, rta, vortexCat, entry, runway, Decision.getNeutralDecision(vortexCat));
     }
 
 
@@ -72,7 +75,7 @@ public class Aircraft implements IAgent {
 
         speed = Constants.nominalApproachSpeed;
         timeIn -= decision.getDeltaTIn(); // in seconds
-        route = graph.getRoute(entry, preferedRumway);
+        route = graph.getRoute(entry, preferredRunway);
         timeInArc = Constants.standardTimeInArc;
 
         this.decision = null;
@@ -103,7 +106,7 @@ public class Aircraft implements IAgent {
 
         speed = newDecision.getSpeed();
         timeIn += newDecision.getDeltaTIn(); // in seconds
-        route = graph.getRoute(entry, graph.getADifferentRunway(preferedRumway));
+        route = graph.getRoute(entry, graph.getADifferentRunway(preferredRunway));
         timeInArc = newDecision.getTimeInMP();
 
         this.decision = newDecision;
@@ -120,8 +123,8 @@ public class Aircraft implements IAgent {
         setDecision(decision);
     }
 
-    public List<Edge> getRoute() {
-        return route.getRoute();
+    public Route getRoute() {
+        return route;
     }
 
     public double getSpeed() {
@@ -219,10 +222,14 @@ public class Aircraft implements IAgent {
     }
 
     public double getTimeOnRunway(){
-        return timeIn + route.getFlyingTime(this); //in seconds
+        return timeIn + route.getFlyingTime(getSpeed(), getLandingSpeed()); //in seconds
     }
 
-    public double getFinalSpeed(){
+    public double getInitialTimeInTMA(){
+        return timeIn - decision.getDeltaTIn();
+    }
+
+    public double getLandingSpeed(){
         double speed;
         switch (vortexCat){
             case 2 : speed = Constants.nominalLandingSpeedH; break;
@@ -231,6 +238,21 @@ public class Aircraft implements IAgent {
                 throw new IllegalStateException("Unexpected value for wake vortex cat: " + vortexCat);
         }
         return speed;
+    }
+
+    public double getMinimalApproachSpeed(){
+        double speed;
+        switch (vortexCat){
+            case 2 : speed = Constants.minimalApproachSpeedH; break;
+            case 1 : speed = Constants.minimalApproachSpeedM; break;
+            default:
+                throw new IllegalStateException("Unexpected value for wake vortex cat: " + vortexCat);
+        }
+        return speed;
+    }
+
+    public SlidingWindowParameters.status getStatus(double start, double end) {
+        return SWParameters.getStatus(start, end);
     }
 
     public String printReward(){

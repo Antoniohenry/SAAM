@@ -12,12 +12,12 @@ public interface IRoute {
      Get list of Edges of the route (useful to iterate on this route)
      @return List of Edges composing the route (preferably a linkedList to iterate)
      */
-    List<Edge> getRoute();
+    List<Edge> getEdges();
 
     /**
      Get the flying time of the route
      @param aircraft : the aircraft flying
      @return flying time in hours
      */
-    double getFlyingTime(Aircraft aircraft);
+    double getFlyingTime(double approachSpeed, double landingSpeed);
 }

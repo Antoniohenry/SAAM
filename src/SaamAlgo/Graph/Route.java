@@ -42,19 +42,19 @@ public class Route implements IRoute{
         return finalEdge.getLength();
     }*/
 
-    public double getFlyingTime(Aircraft aircraft){
+    public double getFlyingTime(double approachSpeed, double landingSpeed){
         double length = 0;
         int size = route.size();
         for(int i = 0; i < size - 1; i++ ){
             length += route.get(i).getLength();
         }
-        double finalLegLength = ((FinalEdge) route.get(size -1)).getLength(aircraft);
+        double finalLegLength = ((FinalEdge) route.get(size -1)).getLength(landingSpeed);
 
-        double timeInHours = (length - finalLegLength)/aircraft.getSpeed() + finalLegLength / aircraft.getFinalSpeed(); // in hours;
+        double timeInHours = (length - finalLegLength)/approachSpeed + finalLegLength / landingSpeed; // in hours;
         return timeInHours * 3600;
     }
 
-    public List<Edge> getRoute() {
+    public List<Edge> getEdges() {
         return route;
     }
 

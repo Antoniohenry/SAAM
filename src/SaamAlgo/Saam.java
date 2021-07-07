@@ -1,16 +1,6 @@
 package SaamAlgo;
 
 
-import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Model.Decision;
-import SaamAlgo.Model.FlightSet;
-import SaamAlgo.Operations.IAgent;
-import SaamAlgo.Operations.IOperations;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-
 //TODO separer operation et calcul de reward
 public class Saam {
 
@@ -47,7 +37,8 @@ public class Saam {
         } */
 
 
-        new Recuit();
+        //new Annealing();
+        new AnnealingWithSW();
 
     }
 }
