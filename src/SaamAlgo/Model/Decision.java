@@ -42,44 +42,80 @@ public class Decision implements IDecision {
         return timeInMP;
     }
 
+    public Decision speedUp(){
+        return new Decision(min(Constants.nominalApproachSpeed, speed + Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
+    }
+
+    public Decision speedDown(){
+        switch (aircraftCategory){
+            case HEAVY: return new Decision(max(Constants.minimalApproachSpeedH, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
+            case MEDIUM: return new Decision(max(Constants.minimalApproachSpeedM, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
+            case LIGHT: throw new Error("the light aircraft model is not implemented yet");
+        }
+        throw new Error("unable to speed down");
+    }
+
+    public Decision TMAUp(){
+        return new Decision(speed, min(Constants.deltaTInMax, deltaTIn + Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+    }
+
+    public Decision TMADown(){
+        return new Decision(speed, max(Constants.deltaTInMin, deltaTIn - Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+    }
+
+    public Decision runwayChange(){
+        return new Decision(speed, deltaTIn, !runwayChange, timeInMP, aircraftCategory);
+    }
+
+    public Decision timeArcUp(){
+        return new Decision(speed, deltaTIn, runwayChange, min(Constants.maxTimeInArc, timeInMP + Constants.timeStep), aircraftCategory);
+    }
+
+    public Decision timeArcDown(){
+        return new Decision(speed, deltaTIn, runwayChange, max(0, timeInMP - Constants.timeStep), aircraftCategory);
+    }
+
     @Override
     public IDecision getNeighbour() {
         double random = new Random().nextDouble();
 
         if(random < 0.25){
             if(new Random().nextBoolean()){ //speed up
-                return new Decision(min(Constants.nominalApproachSpeed, speed + Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
-            }
+                return speedUp();
+              }
             else { //speed down
-                switch (aircraftCategory){
-                    case HEAVY: return new Decision(max(Constants.minimalApproachSpeedH, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
-                    case MEDIUM: return new Decision(max(Constants.minimalApproachSpeedM, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
-                    case LIGHT: throw new Error("the light aircraft model is not implemented yet");
-                }
+                return speedDown();
             }
         }
         if(0.25 <= random && random < 0.5){
             if(new Random().nextBoolean()){ //entry time in TMA up
-                return new Decision(speed, min(Constants.deltaTInMax, deltaTIn + Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+                return TMAUp();
             }
             else {//entry time in TMA down
-                return new Decision(speed, max(Constants.deltaTInMin, deltaTIn - Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+                return TMADown();
             }
         }
         if(0.5 <= random && random < 0.75){//runway change
-            return new Decision(speed, deltaTIn, !runwayChange, timeInMP, aircraftCategory);
+            return runwayChange();
         }
         else {//Change the time in the arc
             if(new Random().nextBoolean()) { //time in arc up
-                return new Decision(speed, deltaTIn, runwayChange, min(Constants.maxTimeInArc, timeInMP + Constants.timeStep), aircraftCategory);
-            }
+                return timeArcUp();
+                 }
             else { //time in the arc down
-                return new Decision(speed, deltaTIn, runwayChange, max(0, timeInMP - Constants.timeStep), aircraftCategory);
-            }
+                return timeArcDown();
+                }
         }
 
     }
 
+    public Aircraft.vortexCat getAircraftCategory() {
+        return aircraftCategory;
+    }
+
+    public Boolean getRunwayChange() {
+        return runwayChange;
+    }
 
     public static Decision getNeutralDecision(Aircraft.vortexCat vortexCat){
         return new Decision(Constants.nominalApproachSpeed, 0, false, Constants.standardTimeInArc, vortexCat);
@@ -88,10 +124,10 @@ public class Decision implements IDecision {
     @Override
     public String toString() {
         return "Decision{" +
-                "deltaV=" + speed +
+                "speed=" + speed +
                 ", delatTIn=" + deltaTIn +
                 ", runwayChange=" + runwayChange +
-                ", deltaT=" + timeInMP +
+                ", timeInMP=" + timeInMP +
                 '}';
     }
 }

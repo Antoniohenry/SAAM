@@ -1,5 +1,7 @@
 package SaamAlgo.Operations;
 
+import SaamAlgo.Model.QTable;
+
 public interface IAgent {
 
     void setDecision(IDecision decision);
@@ -15,5 +17,7 @@ public interface IAgent {
     void setReward();
 
     IDecision getDecision();
+
+    QTable getQ();
 
 }

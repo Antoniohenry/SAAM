@@ -37,6 +37,8 @@ public class Aircraft implements IAgent {
 
     private final SlidingWindowParameters SWParameters;
 
+    private QTable q;
+
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
         nodeConflicts = new LinkedList<>();
         edgeConflicts = new LinkedList<>();
@@ -63,6 +65,9 @@ public class Aircraft implements IAgent {
         this.SWParameters = SlidingWindowParameters.getInstance(this);
 
         setNewDecision(decision);
+
+        q = new QTable(this);
+
     }
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway){
@@ -255,6 +260,10 @@ public class Aircraft implements IAgent {
         return SWParameters.getStatus(start, end);
     }
 
+    public QTable getQ() {
+        return q;
+    }
+
     public String printReward(){
         deleteConflicts();
         DecimalFormat df = new DecimalFormat("#.##");
@@ -283,6 +292,8 @@ public class Aircraft implements IAgent {
         result.append("; TotalReward ").append(df.format(reward));
         return result.toString();
     }
+
+
 
 
 

@@ -121,7 +121,7 @@ public class FlightSet implements IState, IOperations {
     }
 
     private List<Aircraft> getAircraftInSW(double start, double end){
-        return aircrafts.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE || aircraft.getStatus(start, end) == SlidingWindowParameters.status.ONGOING ).collect(Collectors.toList());
+        return aircrafts.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE).collect(Collectors.toList());
     }
 
     @Override

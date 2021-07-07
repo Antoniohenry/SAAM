@@ -11,12 +11,12 @@ public class Annealing implements IAnnealing {
     public Annealing() {
         IState state = IOperations.preProcessing();
         double temperature = heating(state);
-        double finalTemperature = temperature / 6000;
+        double finalTemperature = temperature / 500;
         int iterations = 100;
 
         while(temperature > finalTemperature){
             for(int i = 0; i < iterations; i++) {
-                List<IAgent> worstAgents = state.getAgentsToHandled(0.3, 0, 25 * 3600 );
+                List<IAgent> worstAgents = state.getAgentsToHandled(0.7, 0, 25 * 3600 );
                 //System.out.println("number of aircrafts handled " + worstAgents.size());
                 for (IAgent agent : worstAgents) {
                     IDecision decision = agent.getDecision();
@@ -35,7 +35,7 @@ public class Annealing implements IAnnealing {
             temperature = decreaseTemperature(temperature);
 
         }
-        System.out.println("state = " + state);
+        //System.out.println("state = " + state);
         System.out.println("statePerformance = " + state.stateEvaluation());
 
     }

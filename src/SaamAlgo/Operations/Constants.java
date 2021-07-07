@@ -10,14 +10,14 @@ public class Constants {
     public static double maxTimeInArc = 4. * 60; //in seconds
     public static double standardTimeInArc = 1. * 60; //in sec
 
-    public static double nominalApproachSpeed = 250;
-    public static double minimalApproachSpeedM = 190; // 1.3 * (101.30 * 1.06) + 50 = 189.59 kt
-    public static double nominalLandingSpeedM = 155; //  1.3 * (101.30 * 1.04) + 20 = 156.95 kt
+    public static int nominalApproachSpeed = 250;
+    public static int minimalApproachSpeedM = 190; // 1.3 * (101.30 * 1.06) + 50 = 189.59 kt
+    public static int nominalLandingSpeedM = 155; //  1.3 * (101.30 * 1.04) + 20 = 156.95 kt
 
-    public static double minimalApproachSpeedH = 220; // 1.3 * (122.00 * 1.06) + 50 = 218.11 kt;
-    public static double nominalLandingSpeedH = 185; // 1.3 * (122.00 * 1.04) + 20 = 184.94 kt
+    public static int minimalApproachSpeedH = 220; // 1.3 * (122.00 * 1.06) + 50 = 218.11 kt;
+    public static int nominalLandingSpeedH = 185; // 1.3 * (122.00 * 1.04) + 20 = 184.94 kt
 
-    public static double speedStep = 5; //in kt
+    public static int speedStep = 5; //in kt
 
     public static int deltaTInMax = 5  * 60; //in seconds
     public static int deltaTInMin = -1 * 60;
