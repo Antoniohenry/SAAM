@@ -80,7 +80,7 @@ public class Edge {
             throw new KeyError("Try to remove a key that doesn't exist :" + entryTime);
         }
         else {
-            double exitTime = flightIn.getExitTime(Optional.empty());
+            double exitTime = flightIn.getExitTime();
             IFlight flightOut = flyingAircraftsOut.remove(exitTime);
             if(flightOut == null) {
                 throw new KeyError("Try to remove a key that doesn't exist :" + exitTime);

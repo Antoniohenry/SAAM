@@ -15,7 +15,7 @@ public class FlightSetPerformance implements IStatePerformance {
 
     private final int nodeConflicts;
     private final int linkConflicts;
-    private final double delayOnRunway;
+    private final double averageDelayOnRunway;
     private final double reward;
 
 
@@ -24,7 +24,7 @@ public class FlightSetPerformance implements IStatePerformance {
 
         this.nodeConflicts = getNodeConflictNumber(flightSet.getAircrafts());
         this.linkConflicts = getEdgeConflictNumber(flightSet.getAircrafts());
-        this.delayOnRunway = getTotalDelay(flightSet.getAircrafts());
+        this.averageDelayOnRunway = getAverageDelayInMin(flightSet.getAircrafts());
         this.reward = getFlightSetReward(flightSet.getAircrafts());
     }
 
@@ -37,12 +37,15 @@ public class FlightSetPerformance implements IStatePerformance {
         return nb / 2; //chaque conflit est compte sur deux avions
     }
 
-    public double getTotalDelay(List<Aircraft> aircrafts){
+    public double getAverageDelayInMin(List<Aircraft> aircrafts){
+        if(aircrafts.size() == 0){
+            return 0;
+        }
         double delay = 0;
         for(Aircraft aircraft : aircrafts){
             delay += Math.abs(aircraft.getRta() - aircraft.getTimeOnRunway());
         }
-        return delay;
+        return delay / (60 * aircrafts.size());
     }
 
     public int getNodeConflictNumber(List<Aircraft> aircrafts){
@@ -75,15 +78,29 @@ public class FlightSetPerformance implements IStatePerformance {
         return linkConflicts;
     }
 
-    public double getDelayOnRunway() {
-        return delayOnRunway;
+    public double getAverageDelayOnRunway() {
+        return averageDelayOnRunway;
     }
 
     public double getReward() {
         return reward;
     }
 
-    public String getSWPerformance(double start, double end){
+    public List<Integer> getSWPerformance(double start, double end){
+        List<IAgent> agents = flightSet.getAgentsToHandled(0, start, end);
+
+        List<Aircraft> aircrafts = new ArrayList<>();
+
+        for (IAgent agent : agents){
+            if(agent instanceof Aircraft){
+                aircrafts.add( (Aircraft) agent);
+            }
+        }
+        return List.of(getNodeConflictNumber(aircrafts), getEdgeConflictNumber(aircrafts));
+
+    }
+
+    public String getSWPerformanceString(double start, double end){
         List<IAgent> agents = flightSet.getAgentsToHandled(0, start, end);
 
         List<Aircraft> aircrafts = new ArrayList<>();
@@ -101,8 +118,8 @@ public class FlightSetPerformance implements IStatePerformance {
                         getNodeConflictNumber(aircrafts)) +
                 " Edge Conflict : " +
                 getEdgeConflictNumber(aircrafts) +
-                " Delay : " +
-                getTotalDelay(aircrafts) +
+                " AverageDelay : " +
+                getAverageDelayInMin(aircrafts) +
                 " reward : " +
                 getFlightSetReward(aircrafts);
 
@@ -114,7 +131,7 @@ public class FlightSetPerformance implements IStatePerformance {
         return "FlightSetPerformance{" +
                 "nodeConflicts=" + nodeConflicts +
                 ", linkConflicts=" + linkConflicts +
-                ", delayOnRunway=" + delayOnRunway +
+                ", delayOnRunway=" + averageDelayOnRunway +
                 ", reward=" + reward +
                 '}';
     }

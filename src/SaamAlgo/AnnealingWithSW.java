@@ -21,7 +21,7 @@ public class AnnealingWithSW {
             double finalTemperature = temperature / 100;
             int iterations = 20;
 
-            System.out.println("SW before SA = " + state.stateEvaluation().getSWPerformance(start, end));
+            System.out.println("SW before SA = " + state.stateEvaluation().getSWPerformanceString(start, end));
 
             while(temperature > finalTemperature){
                 for(int i = 0; i < iterations; i++) {
@@ -45,7 +45,7 @@ public class AnnealingWithSW {
 
             }
 
-            System.out.println("SW after SA = " + state.stateEvaluation().getSWPerformance(start, end));
+            System.out.println("SW after SA = " + state.stateEvaluation().getSWPerformanceString(start, end));
 
             start += Constants.windowStep;
             end += Constants.windowStep;

@@ -26,20 +26,20 @@ public class EdgeFlight implements IFlight {
         double separation;
         double distance;
 
-        if (entryTime < other.getEntryTime(Optional.empty())) {
+        if (entryTime < other.getEntryTime()) {
             //other arrive in second on the edge
             separation = Constants.TABLE_SEPARATION[aircraft.getVortexCat()][other.getAircraft().getVortexCat()];
             if (aircraft.getSpeed() > other.getAircraft().getSpeed()) {
                 //other is the slowest
-                deltaTime = other.getEntryTime(Optional.empty()) - entryTime;
+                deltaTime = other.getEntryTime() - entryTime;
 
             } else {
                 //other is the fastest
-                if (other.getExitTime(Optional.empty()) < exitTime) {
+                if (other.getExitTime() < exitTime) {
                     overtaking = true;
-                    deltaTime = exitTime - other.getExitTime(Optional.empty());
+                    deltaTime = exitTime - other.getExitTime();
                 } else {
-                    deltaTime = other.getExitTime(Optional.empty()) - exitTime;
+                    deltaTime = other.getExitTime() - exitTime;
                 }
 
             }
@@ -49,14 +49,14 @@ public class EdgeFlight implements IFlight {
             separation = Constants.TABLE_SEPARATION[other.getAircraft().getVortexCat()][aircraft.getVortexCat()];
             if (other.getAircraft().getSpeed() > aircraft.getSpeed()) {
                 //other is the fastest
-                deltaTime = entryTime - other.getEntryTime(Optional.empty());
+                deltaTime = entryTime - other.getEntryTime();
             } else {
                 //other is the slowest
-                if (other.getExitTime(Optional.empty()) > exitTime) {
+                if (other.getExitTime() > exitTime) {
                     overtaking = true;
-                    deltaTime = other.getExitTime(Optional.empty()) - exitTime;
+                    deltaTime = other.getExitTime() - exitTime;
                 } else {
-                    deltaTime = exitTime - other.getExitTime(Optional.empty());
+                    deltaTime = exitTime - other.getExitTime();
                 }
 
             }
@@ -95,11 +95,11 @@ public class EdgeFlight implements IFlight {
                 '}';
     }
 
-    public double getEntryTime(Optional<Double> radius) {
+    public double getEntryTime() {
         return entryTime;
     }
 
-    public double getExitTime(Optional<Double> radius) {
+    public double getExitTime() {
         return exitTime;
     }
 

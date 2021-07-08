@@ -8,7 +8,7 @@ public class Saam {
 
         //new Annealing();
         //new AnnealingWithSW();
-        new QLearning();
+        new QLearning(10, 0.001, 0.99, 300, 0.7, 0.1);
 
     }
 }

@@ -8,7 +8,9 @@ public interface IStatePerformance {
 
     double getReward();
 
-   String getSWPerformance(double start, double end);
+   String getSWPerformanceString(double start, double end);
+
+   List<Integer> getSWPerformance(double start, double stop);
 
     String toString();
 

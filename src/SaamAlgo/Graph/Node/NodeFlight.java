@@ -5,75 +5,80 @@ import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Operations.Constants;
 
-import java.util.Optional;
-
 public class NodeFlight implements IFlight {
-    private final double time;
+    private final double entryTime;
     private final Aircraft aircraft;
+    private final double exitTime;
 
     public NodeFlight(double time, Aircraft aircraft) {
-        this.time = time;
-        if(time < 0){
+        this.entryTime = time - (Constants.nodeRadius /aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
+        if(entryTime < 0){
             throw new Error("Negative entryTime, need an offset on the beginning of simulation ");
         }
-
         this.aircraft = aircraft;
+        this.exitTime = time + (Constants.nodeRadius / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
     }
 
-
+    @Override
     public double isInConflict(IFlight other) {
 
         boolean overtaking = false;
         double deltaTime;
-
+        double separation = Constants.nodeRadius * 2;
         double distance;
 
-        double radius;
-        double separation;
-
-        if (getEntryTime(Optional.of(3.)) < other.getEntryTime(Optional.of(3.))) {
+        if (entryTime < other.getEntryTime()) {
             //other arrive in second on the node
-            separation = Constants.TABLE_SEPARATION[aircraft.getVortexCat()][other.getAircraft().getVortexCat()];
-            radius = separation / Math.sqrt(2);
+            if (aircraft.getSpeed() > other.getAircraft().getSpeed()) {
+                //other is the slowest
+                deltaTime = other.getEntryTime() - entryTime;
 
-            deltaTime = getExitTime(Optional.of(radius)) - other.getEntryTime(Optional.of(radius));
+            } else {
+                //other is the fastest
+                if (other.getExitTime() < exitTime) {
+                    overtaking = true;
+                    deltaTime = exitTime - other.getExitTime();
+                } else {
+                    deltaTime = other.getExitTime() - exitTime;
+                }
 
-            if (deltaTime < 0) {
-                return 0;
             }
-
-            if (getExitTime(Optional.of(radius)) > other.getExitTime(Optional.of(radius))) {
-                overtaking = true;
-            }
-
+            distance = deltaTime * Constants.SEC_TO_HOURS * aircraft.getSpeed();
         } else {
-            //other arrives in first in the node
-            separation = Constants.TABLE_SEPARATION[other.getAircraft().getVortexCat()][aircraft.getVortexCat()];
-            radius = separation / Math.sqrt(2);
+            //other arrive in first
+            if (other.getAircraft().getSpeed() > aircraft.getSpeed()) {
+                //other is the fastest
+                deltaTime = entryTime - other.getEntryTime();
+            } else {
+                //other is the slowest
+                if (other.getExitTime() > exitTime) {
+                    overtaking = true;
+                    deltaTime = other.getExitTime() - exitTime;
+                } else {
+                    deltaTime = exitTime - other.getExitTime();
+                }
 
-            deltaTime = other.getExitTime(Optional.of(radius)) - getEntryTime(Optional.of(radius));
-
-            if (deltaTime < 0) {
-                return 0;
             }
-
-            if (other.getExitTime(Optional.of(radius)) > getExitTime(Optional.of(radius))) {
-                overtaking = true;
-            }
+            distance = deltaTime * Constants.SEC_TO_HOURS * other.getAircraft().getSpeed();
         }
-
-        distance = deltaTime * Constants.SEC_TO_HOURS * Constants.nominalApproachSpeed;
 
         double criticize = 0;
-        if (distance < separation) {
+        if(distance < separation) {
             criticize = distance / separation;
+
+            if (criticize > 1 || criticize < 0) {
+                System.out.println("criticize = " + criticize + "Not between 0 and 1");
+                System.out.println("other = " + other);
+                System.out.println("this = " + this);
+                //TODO reproduire cette erreur
+            }
         }
 
-        if (criticize < 0 || criticize > 1) {
-            throw new Error("Criticize not between 0 and 1 : " + criticize);
+        if(criticize < 0 || criticize > 1){
+            throw new Error("Criticize not between 0 and 1");
         }
 
-        if (overtaking) {
+        if (overtaking){
             criticize += Constants.overtakingReward;
         }
 
@@ -87,32 +92,22 @@ public class NodeFlight implements IFlight {
         other.getAircraft().addEdgeConflict(conflict);
     }
 
-    public double getEntryTime(Optional<Double> radius) {
-        if(radius.isPresent()) {
-            return time - (radius.get() / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
-        }
-        else {
-            throw new Error("trying to get a node entryTime without a radius node");
-        }
+    public double getEntryTime() {
+        return entryTime;
     }
 
     public Aircraft getAircraft() {
         return aircraft;
     }
 
-    public double getExitTime(Optional<Double> radius) {
-        if(radius.isPresent()){
-            return time + (radius.get() / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
-        }
-        else {
-            throw new Error("trying to get a node entryTime without a radius node");
-        }
+    public double getExitTime() {
+        return exitTime;
     }
 
     @Override
     public String toString() {
         return "Flight{" +
-                "time" + time +
+                "time" + (entryTime + exitTime) / 2 +
                 ", aircraft=" + aircraft.getId() +
                 '}';
     }

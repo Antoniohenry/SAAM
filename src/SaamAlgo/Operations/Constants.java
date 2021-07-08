@@ -7,6 +7,8 @@ public class Constants {
     public static double runwayReward = 0.5;
     public static double conflictReward = 1;
 
+    public static double nodeRadius = 2.2;
+
     public static double maxTimeInArc = 4. * 60; //in seconds
     public static double standardTimeInArc = 1. * 60; //in sec
 
@@ -24,8 +26,8 @@ public class Constants {
 
     public static int timeStep = 10; // in Seconds
 
-    public static double windowLength = 120 * 60; //in seconds
-    public static double windowStep = 30 * 60; //in seconds
+    public static double windowLength = 45 * 60; //in seconds
+    public static double windowStep = 15 * 60; //in seconds
 
     public static double offsetTimeStartingTheSimulation = 60 * 60; //in seconds
 

@@ -24,7 +24,7 @@ public interface IFlight {
     get the entryTime of the aircraft on the nodeEntry
      @return time in hours
      */
-    double getEntryTime(Optional<Double> radius);
+    double getEntryTime();
 
     /**
      get the aircraft in this flight
@@ -36,7 +36,7 @@ public interface IFlight {
      get the exitTime of the aircraft on a runway
      @return time in hours
      */
-    double getExitTime(Optional<Double> radius);
+    double getExitTime();
 
 
 

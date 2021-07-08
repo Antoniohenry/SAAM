@@ -33,7 +33,7 @@ public class QTable {
                 for(int mp = 0; mp < dimMP; mp ++){
                     for(int r = 0; r < dimRunway; r++){
                         for(int act = 0; act < numberOfActionsPossible; act ++){
-                            q[s][tma][mp][r][act] = 0;
+                            q[s][tma][mp][r][act] = 1000;
                         }
                     }
                 }
@@ -70,9 +70,9 @@ public class QTable {
         double[] actionReward = getActionReward(decision);
 
         int maxIndex = 0;
-        double max = 0;
+        double max = 10000;
         for(int i = 0; i < actionReward.length; i++){
-            if(actionReward[i] > max){
+            if(actionReward[i] < max){
                 max = actionReward[i];
                 maxIndex = i;
             }
