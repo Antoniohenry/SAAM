@@ -4,9 +4,8 @@ import SaamAlgo.Graph.Graph;
 import SaamAlgo.Graph.Node.Node;
 import SaamAlgo.Operations.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,19 +13,19 @@ public class FlightSet implements IState, IOperations {
 
     private final ArrayList<Aircraft> aircrafts;
     private final Graph graph;
-    private double worstReward;
-    private FlightSetPerformance performance;
 
-    Comparator<Aircraft> comparator = Comparator.comparing(Aircraft::getReward);
+    Comparator<IAgent> comparator = Comparator.comparing(IAgent::getReward);
 
     public FlightSet() {
+        super();
         this.graph = new Graph();
         this.aircrafts = new ArrayList<>();
 
-        getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
-        getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
-
-        this.performance = new FlightSetPerformance(this);
+        if(false) {
+            getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
+            getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
+        }
+        else getFlightSetFromFile("DATA/simulation.flights");
 
     }
 
@@ -35,7 +34,7 @@ public class FlightSet implements IState, IOperations {
         Random random = new Random(123);
         String line;
 
-        System.out.println("Loading flights...");
+        //System.out.println("Loading flights...");
         try {
             FileReader flightsFile = new FileReader(filename);
             BufferedReader flightsFileInput = new BufferedReader(flightsFile);
@@ -88,54 +87,130 @@ public class FlightSet implements IState, IOperations {
 
             }
 
+            flightsFileInput.close();
+            flightsFile.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-
-
-
-    public List<Aircraft> getAircrafts() {
+    public List<? extends IAgent> getAgents() {
         return aircrafts;
     }
 
-
-
-    public List<IAgent> getAgentsToHandled(double threshold, double SWStartingTime, double SWEndingTime){ // in %
-
-        List<Aircraft> aircraftInSW = getAircraftInSW(SWStartingTime, SWEndingTime);
-        if(aircraftInSW.size() == 0){
-            return new LinkedList<>();
-        }
-        worstReward = performance.getWorstReward(aircraftInSW);
-        aircraftInSW.sort(comparator.reversed());
-        LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
-        for (Aircraft aircraft : aircraftInSW){
-            if(aircraft.getReward() >= threshold * worstReward){
-                criticalFlightSet.add(aircraft);
+    public List<Number> getTotalPerformance(List<? extends IAgent> aircrafts){
+        double reward = 0;
+        int edgeConflict = 0;
+        int nodeConflict = 0;
+        double averageDelay = 0;
+        double worstReward = 0;
+        for(IAgent aircraft : aircrafts){
+            edgeConflict += aircraft.getEdgeConflictNumber();
+            nodeConflict += aircraft.getNodeConflictNumber();
+            reward += aircraft.getReward();
+            averageDelay += aircraft.getDelayInMin();
+            if(aircraft.getReward() < worstReward){
+                worstReward = aircraft.getReward();
             }
         }
+
+        return List.of(reward, worstReward, averageDelay /  aircrafts.size(), nodeConflict / 2, edgeConflict / 2);
+
+    }
+
+    public String getPerformanceString(List<? extends IAgent> aircrafts){
+        DecimalFormat df = new DecimalFormat("#.####");
+        List<Number> perf = getTotalPerformance(aircrafts);
+
+        return "TotalReward = " + df.format(perf.get(0)) +
+                "  WorstReward = " + df.format(perf.get(1)) +
+                "  AverageDelay = " + df.format(perf.get(2)) + " min " +
+                "  NodeConflict = " + perf.get(3) +
+                "  EdgeConflict = " + perf.get(4);
+
+    }
+
+
+    public List<IAgent> getAgentsToHandled(double threshold, List<? extends IAgent> aircrafts){ // in %
+
+        if(aircrafts.size() == 0){
+            return new LinkedList<>();
+        }
+        aircrafts.sort(comparator);
+        LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
+
+        if(threshold < 1){
+            double worstSWReward = aircrafts.get(0).getReward();
+            for (IAgent aircraft : aircrafts) {
+                if (aircraft.getReward() <= threshold * worstSWReward && aircraft.getReward() < 0) {
+                    criticalFlightSet.add(aircraft);
+                }
+            }
+        }
+
+        if(threshold == 1){
+            for (IAgent aircraft : aircrafts) {
+                if (aircraft.getNodeConflictNumber() != 0 || aircraft.getEdgeConflictNumber() !=0) {
+                    criticalFlightSet.add(aircraft);
+                }
+            }
+
+            if(criticalFlightSet.size() == 0){
+                Random rd = new Random();
+                double totalReward = (double) getTotalPerformance(aircrafts).get(0);
+                for (IAgent aircraft : aircrafts) {
+                    if (rd.nextDouble() < (aircraft.getReward() / totalReward)) {
+                        criticalFlightSet.add(aircraft);
+                    }
+                }
+            }
+
+        }
+
+
+        if(threshold == 1.5) {
+            Random rd = new Random();
+            double totalReward = (double) getTotalPerformance(aircrafts).get(0);
+            for (IAgent aircraft : aircrafts) {
+                if (rd.nextDouble() < (aircraft.getReward() / totalReward)) {
+                    criticalFlightSet.add(aircraft);
+                }
+            }
+        }
+
         return criticalFlightSet;
     }
 
-    private List<Aircraft> getAircraftInSW(double start, double end){
+    public List<? extends IAgent> getAircraftInSW(double start, double end){
         return aircrafts.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE).collect(Collectors.toList());
-    }
-
-    @Override
-    public IStatePerformance stateEvaluation() {
-        performance = new FlightSetPerformance(this);
-        return performance;
     }
 
 
     @Override
     public String toString() {
-        return "FlightSet{" +
-                "aircrafts=" + aircrafts +
-                ", worstReward=" + worstReward +
-                '}';
+        return getPerformanceString(aircrafts);
     }
+
+    public void toDoc(String pathName){
+        FileWriter file;
+        try {
+            file = new FileWriter(pathName);
+
+            for(Aircraft aircraft : aircrafts){
+                file.append(aircraft.getDecision().toString()).append(String.valueOf(aircraft.getReward())).append(" \n");
+            }
+
+            file.append(getPerformanceString(aircrafts));
+
+            file.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
+

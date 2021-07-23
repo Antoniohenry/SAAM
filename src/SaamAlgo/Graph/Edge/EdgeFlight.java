@@ -5,7 +5,6 @@ import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Operations.Constants;
 
-import java.util.Optional;
 
 public class EdgeFlight implements IFlight {
 
@@ -14,6 +13,7 @@ public class EdgeFlight implements IFlight {
     private final Aircraft aircraft;
 
     public EdgeFlight(Double entryTime, Double exitTime, Aircraft aircraft) {
+        super();
         this.entryTime = entryTime;
         this.exitTime = exitTime;
         this.aircraft = aircraft;
@@ -65,7 +65,7 @@ public class EdgeFlight implements IFlight {
 
         double criticize = 0;
         if(distance < separation) {
-            criticize = distance / separation;
+            criticize = (separation - distance) / separation;
         }
 
         if(criticize < 0 || criticize > 1){
@@ -73,7 +73,7 @@ public class EdgeFlight implements IFlight {
         }
 
         if (overtaking){
-            criticize += Constants.overtakingReward;
+            criticize = 1;
         }
 
         return criticize;

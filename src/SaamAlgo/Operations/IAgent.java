@@ -2,9 +2,12 @@ package SaamAlgo.Operations;
 
 import SaamAlgo.Model.QTable;
 
+
 public interface IAgent {
 
     void setDecision(IDecision decision);
+
+    String getId();
 
     void removeDecision();
 
@@ -13,6 +16,8 @@ public interface IAgent {
     int getEdgeConflictNumber();
 
     int getNodeConflictNumber();
+
+    double getDelayInMin();
 
     void setReward();
 

@@ -3,6 +3,7 @@ package SaamAlgo.Model;
 import SaamAlgo.Operations.Constants;
 import SaamAlgo.Operations.IDecision;
 
+import java.util.Objects;
 import java.util.Random;
 
 import static java.lang.Math.max;
@@ -15,10 +16,9 @@ public class Decision implements IDecision {
     private final Boolean runwayChange;
     private final double timeInMP; //in seconds
     private final Aircraft.vortexCat aircraftCategory;
-    private static final Random generator = new Random();
-
 
     public Decision(double speed, int deltaTIn, Boolean runwayChange, double timeInMP, Aircraft.vortexCat vortexCat){
+        super();
         this.deltaTIn = deltaTIn;
         this.speed = speed;
         this.timeInMP = timeInMP;
@@ -98,7 +98,7 @@ public class Decision implements IDecision {
         if(0.5 <= random && random < 0.75){//runway change
             return runwayChange();
         }
-        else {//Change the time in the arc
+        if(0.75 <= random) {//Change the time in the arc
             if(new Random().nextBoolean()) { //time in arc up
                 return timeArcUp();
                  }
@@ -106,6 +106,8 @@ public class Decision implements IDecision {
                 return timeArcDown();
                 }
         }
+
+        return null;
 
     }
 
@@ -125,9 +127,23 @@ public class Decision implements IDecision {
     public String toString() {
         return "Decision{" +
                 "speed=" + speed +
-                ", delatTIn=" + deltaTIn +
+                ", deltaTIn=" + deltaTIn +
                 ", runwayChange=" + runwayChange +
                 ", timeInMP=" + timeInMP +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Decision)) return false;
+        Decision decision = (Decision) o;
+        return Double.compare(decision.getSpeed(), getSpeed()) == 0 && getDeltaTIn() == decision.getDeltaTIn() && Double.compare(decision.getTimeInMP(), getTimeInMP()) == 0 && Objects.equals(getRunwayChange(), decision.getRunwayChange()) && getAircraftCategory() == decision.getAircraftCategory();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSpeed(), getDeltaTIn(), getRunwayChange(), getTimeInMP(), getAircraftCategory());
+    }
+
 }

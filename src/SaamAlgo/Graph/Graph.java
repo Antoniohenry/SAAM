@@ -20,6 +20,7 @@ public class Graph implements IGraph {
     public Set<Node> runways;
 
     public Graph() {
+        super();
         nodes = new HashMap<>();
         edges = new HashMap<>();
         runways = new HashSet<>();
@@ -35,7 +36,7 @@ public class Graph implements IGraph {
     private void getNodesFromFile(String filename) {
         String line;
 
-        System.out.println("Loading nodes...");
+        //System.out.println("Loading nodes...");
         try {
             FileReader nodeFile = new FileReader(filename);
             BufferedReader nodeFileInput = new BufferedReader(nodeFile);
@@ -58,7 +59,7 @@ public class Graph implements IGraph {
     private void getEdgesFromFile(String filename) {
         String line;
 
-        System.out.println("Loading edges...");
+        //System.out.println("Loading edges...");
         try {
             FileReader edgesFile = new FileReader(filename);
             BufferedReader edgesFileInput = new BufferedReader(edgesFile);
@@ -87,7 +88,7 @@ public class Graph implements IGraph {
     private void getRoutesFromFile(String filename) {
         String line;
 
-        System.out.println("Loading routes...");
+        //System.out.println("Loading routes...");
         try {
             FileReader routesFile = new FileReader(filename);
             BufferedReader routesFileInput = new BufferedReader(routesFile);
@@ -165,6 +166,5 @@ public class Graph implements IGraph {
             edge.getExitNode().removeAircraft(time);
         }
     }
-
 
 }

@@ -96,4 +96,5 @@ public class Node extends Point {
     public int hashCode() {
         return Objects.hash(super.hashCode(), getName());
     }
+
 }

@@ -16,7 +16,7 @@ public class Annealing implements IAnnealing {
 
         while(temperature > finalTemperature){
             for(int i = 0; i < iterations; i++) {
-                List<IAgent> worstAgents = state.getAgentsToHandled(0.7, 0, 25 * 3600 );
+                List<IAgent> worstAgents = state.getAgentsToHandled(0, state.getAgents());
                 //System.out.println("number of aircrafts handled " + worstAgents.size());
                 for (IAgent agent : worstAgents) {
                     IDecision decision = agent.getDecision();
@@ -30,13 +30,13 @@ public class Annealing implements IAnnealing {
                 }
             }
 
-            System.out.println("state.stateEvluation = " + state.stateEvaluation());
+            System.out.println("state = " + state);
 
             temperature = decreaseTemperature(temperature);
 
         }
         //System.out.println("state = " + state);
-        System.out.println("statePerformance = " + state.stateEvaluation());
+        System.out.println("state = " + state);
 
     }
 
@@ -53,7 +53,7 @@ public class Annealing implements IAnnealing {
 
     @Override
     public boolean accept(double oldReward, double newReward, double temperature) {
-        return newReward < oldReward || new Random().nextDouble() < Math.exp((newReward - oldReward) / temperature);
+        return newReward > oldReward || new Random().nextDouble() < Math.exp((newReward - oldReward) / temperature);
 
     }
 }

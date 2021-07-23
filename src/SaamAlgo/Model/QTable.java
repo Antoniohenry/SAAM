@@ -1,7 +1,5 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Model.Decision;
 import SaamAlgo.Operations.Constants;
 
 import java.util.List;
@@ -10,36 +8,41 @@ import java.util.Random;
 
 public class QTable {
 
-    private final int numberOfActionsPossible = 8;
+    private final int numberOfActionsPossible = 7;
     private final Random random = new Random();
 
-    double alpha = 0.1;
-    double gamma = 0.9;
+    int dimSpeed;
+    int dimEntryTime;
+    int dimMP;
+    int dimRunway;
 
-
-    private double[][][][][] q;
+    private final double[][][][][] q;
 
     public QTable(Aircraft aircraft) {
 
-        int dimSpeed = (int) ((Constants.nominalApproachSpeed - aircraft.getMinimalApproachSpeed()) / Constants.speedStep) + 1;
-        int dimEntryTime = (Constants.deltaTInMax - Constants.deltaTInMin) / Constants.timeStep + 1;
-        int dimMP = (int) Constants.maxTimeInArc / Constants.timeStep + 1;
-        int dimRunway = 2;
+        dimSpeed = (int) ((Constants.nominalApproachSpeed - aircraft.getMinimalApproachSpeed()) / Constants.speedStep) + 1;
+        dimEntryTime = (Constants.deltaTInMax - Constants.deltaTInMin) / Constants.timeStep + 1;
+        dimMP = (int) Constants.maxTimeInArc / Constants.timeStep + 1;
+        dimRunway = 2;
 
         q = new double[dimSpeed][dimEntryTime][dimMP][dimRunway][numberOfActionsPossible];
 
+        resetQTable(0);
+
+    }
+
+    public void resetQTable(double Qinit){
         for(int s = 0; s < dimSpeed; s++){
             for(int tma = 0; tma < dimEntryTime; tma++ ){
                 for(int mp = 0; mp < dimMP; mp ++){
                     for(int r = 0; r < dimRunway; r++){
                         for(int act = 0; act < numberOfActionsPossible; act ++){
-                            q[s][tma][mp][r][act] = 1000;
+                            q[s][tma][mp][r][act] = Qinit + random.nextDouble() ;
                         }
                     }
                 }
             }
         }
-
     }
 
     public double[] getActionReward(Decision decision){
@@ -70,9 +73,9 @@ public class QTable {
         double[] actionReward = getActionReward(decision);
 
         int maxIndex = 0;
-        double max = 10000;
+        double max = -10000000;
         for(int i = 0; i < actionReward.length; i++){
-            if(actionReward[i] < max){
+            if(actionReward[i] > max){
                 max = actionReward[i];
                 maxIndex = i;
             }
@@ -91,15 +94,14 @@ public class QTable {
             case 4 : return oldDecision.timeArcUp();
             case 5 : return oldDecision.timeArcDown();
             case 6 : return oldDecision.runwayChange();
-            case 7 : return oldDecision;
             default: throw new Error("unknown action");
         }
     }
 
-    public void updateQ(Decision oldDecision, int action, double reward){
+    public void updateQ(Decision oldDecision, int action, double reward, double alpha, double gamma){
         Decision newDecision = getDecision(oldDecision, action);
         List<Number> bestAction = getBestAction(newDecision);
-        getActionReward(oldDecision)[action] += alpha * (reward + gamma * (double) bestAction.get(1) - getActionReward(oldDecision)[action]);
+        getActionReward(oldDecision)[action] += alpha * (reward + gamma * ((double) bestAction.get(1)) - getActionReward(oldDecision)[action]);
     }
 
     public int getGreedy(Decision oldDecision, double epsilon){
@@ -110,6 +112,7 @@ public class QTable {
         }
         else {
             action = (int) getBestAction(oldDecision).get(0);
+
         }
         return action;
     }

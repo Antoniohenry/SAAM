@@ -1,5 +1,6 @@
 package SaamAlgo.Graph;
 
+
 public interface IConflict {
 
     /**

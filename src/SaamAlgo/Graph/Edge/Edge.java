@@ -7,7 +7,6 @@ import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Node.Node;
 import SaamAlgo.Operations.Constants;
 
-import java.util.Optional;
 import java.util.TreeMap;
 
 public class Edge {
@@ -94,6 +93,22 @@ public class Edge {
         computeConflictsAndSetRewardBackward(currentKeyIn, currentKeyOut);
     }
 
+    public void computeConflictsAndSetRewardForward(double currentKeyIn, double currentKeyOut){
+        Double nextKeyIn = flyingAircraftsIn.higherKey(currentKeyIn);
+        Double nextKeyOut = flyingAircraftsOut.higherKey(currentKeyOut);
+
+        IFlight currentFlight = flyingAircraftsIn.get(currentKeyIn);
+
+        boolean next = true;
+        while (next && (nextKeyIn !=null) && (nextKeyOut != null)){
+
+            next = continueInBothTree(nextKeyIn, nextKeyOut, currentFlight);
+
+            nextKeyIn = flyingAircraftsIn.higherKey(nextKeyIn);
+            nextKeyOut = flyingAircraftsOut.higherKey(nextKeyOut);
+        }
+    }
+
     public void computeConflictsAndSetRewardBackward(double currentKeyIn, double currentKeyOut) {
         Double previousKeyIn = flyingAircraftsIn.lowerKey(currentKeyIn);
         Double previousKeyOut = flyingAircraftsOut.lowerKey(currentKeyOut);
@@ -108,10 +123,6 @@ public class Edge {
             previousKeyIn = flyingAircraftsIn.lowerKey(previousKeyIn);
             previousKeyOut = flyingAircraftsOut.lowerKey(previousKeyOut);
         }
-
-        //if there is an overtaking and one of the key is null we have to compute conflicts on the other one
-        descentInTreeMap(previousKeyIn, currentFlight, flyingAircraftsIn);
-        descentInTreeMap(previousKeyOut, currentFlight, flyingAircraftsOut);
 
     }
 
@@ -149,58 +160,6 @@ public class Edge {
     }
 
 
-    public void computeConflictsAndSetRewardForward(double currentKeyIn, double currentKeyOut){
-        Double nextKeyIn = flyingAircraftsIn.higherKey(currentKeyIn);
-        Double nextKeyOut = flyingAircraftsOut.higherKey(currentKeyOut);
-
-        IFlight currentFlight = flyingAircraftsIn.get(currentKeyIn);
-
-        boolean next = true;
-        while (next && (nextKeyIn !=null) && (nextKeyOut != null)){
-
-            next = continueInBothTree(nextKeyIn, nextKeyOut, currentFlight);
-
-            nextKeyIn = flyingAircraftsIn.higherKey(nextKeyIn);
-            nextKeyOut = flyingAircraftsOut.higherKey(nextKeyOut);
-        }
-
-        //if there is an overtaking and one of the key is null we have to compute conflicts on the other one
-        climbInTreeMap(nextKeyIn, currentFlight, flyingAircraftsIn);
-        climbInTreeMap(nextKeyOut, currentFlight, flyingAircraftsOut);
-
-    }
-
-    private void climbInTreeMap(Double nextKey, IFlight currentFlight, TreeMap<Double, IFlight> flyingAircrafts) {
-        while (nextKey != null){
-            IFlight nextFlight = flyingAircrafts.get(nextKey);
-            double criticize = currentFlight.isInConflict(nextFlight);
-            if(criticize != 0){
-                IConflict conflict = new EdgeConflict(currentFlight, nextFlight, name, criticize);
-                conflict.setConflict();
-                nextKey = flyingAircrafts.higherKey(nextKey);
-            }
-            else {
-                break;
-            }
-        }
-    }
-
-    private void descentInTreeMap(Double previousKey, IFlight currentFlight, TreeMap<Double, IFlight> flyingAircrafts) {
-        while (previousKey != null){
-            IFlight previousFlight = flyingAircrafts.get(previousKey);
-            double criticize = currentFlight.isInConflict(previousFlight);
-            if(criticize != 0){
-                IConflict conflict = new EdgeConflict(currentFlight, previousFlight, name, criticize);
-                conflict.setConflict();
-                previousKey = flyingAircrafts.lowerKey(previousKey);
-            }
-            else {
-                break;
-            }
-        }
-    }
-
-
     @Override
     public String toString() {
         return "Edge{" +
@@ -208,4 +167,5 @@ public class Edge {
                 //", flyingAircraft=" + flyingAircraft +
                 '}';
     }
+
 }

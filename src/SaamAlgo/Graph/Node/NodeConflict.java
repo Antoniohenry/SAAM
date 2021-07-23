@@ -1,10 +1,9 @@
 package SaamAlgo.Graph.Node;
 
 import SaamAlgo.Graph.Conflict;
-import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.IFlight;
 
-public class NodeConflict extends Conflict implements IConflict {
+public class NodeConflict extends Conflict {
 
 
     public NodeConflict(IFlight flight1, IFlight flight2, String name, double criticize) {

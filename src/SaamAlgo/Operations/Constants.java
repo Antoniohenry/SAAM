@@ -2,10 +2,9 @@ package SaamAlgo.Operations;
 
 public class Constants {
 
-    public static double rtaReward = 0.1; //en point de reward par minute de retard ou d'avance
-    public static double overtakingReward = 3; //reward penalty en cas d'overtaking
-    public static double runwayReward = 0.5;
-    public static double conflictReward = 1;
+    public static double rtaReward = 1; //en point de reward par minute de retard ou d'avance
+    public static double runwayReward = 2;
+    public static double conflictReward = 100;
 
     public static double nodeRadius = 2.2;
 
@@ -19,17 +18,17 @@ public class Constants {
     public static int minimalApproachSpeedH = 220; // 1.3 * (122.00 * 1.06) + 50 = 218.11 kt;
     public static int nominalLandingSpeedH = 185; // 1.3 * (122.00 * 1.04) + 20 = 184.94 kt
 
-    public static int speedStep = 5; //in kt
+    public static int speedStep = 10; //in kt
 
     public static int deltaTInMax = 5  * 60; //in seconds
     public static int deltaTInMin = -1 * 60;
 
-    public static int timeStep = 10; // in Seconds
+    public static int timeStep = 20; // in Seconds
 
-    public static double windowLength = 45 * 60; //in seconds
-    public static double windowStep = 15 * 60; //in seconds
+    public static double windowLength = 18 * 60; //in seconds
+    public static double windowStep = 6 * 60; //in seconds
 
-    public static double offsetTimeStartingTheSimulation = 60 * 60; //in seconds
+    public static double offsetTimeStartingTheSimulation = windowLength; //in seconds
 
     public static double[][] TABLE_SEPARATION= //nm
             {

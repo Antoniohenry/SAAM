@@ -13,9 +13,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import static SaamAlgo.Model.Aircraft.vortexCat.*;
+
 //TODO action listener between aircraft and conflict
 
-public class Aircraft implements IAgent {
+public class Aircraft implements IAgent{
 
     public enum vortexCat{HEAVY, MEDIUM, LIGHT}
 
@@ -37,9 +39,10 @@ public class Aircraft implements IAgent {
 
     private final SlidingWindowParameters SWParameters;
 
-    private QTable q;
+    private final QTable q;
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
+        super();
         nodeConflicts = new LinkedList<>();
         edgeConflicts = new LinkedList<>();
 
@@ -87,6 +90,15 @@ public class Aircraft implements IAgent {
 
     }
 
+    public vortexCat toVortexCat(int vortex){
+        switch (vortex){
+            case 2 : return HEAVY;
+            case 1 : return MEDIUM;
+            case 0 : return LIGHT;
+        }
+        throw new Error( vortex + " vortex category doesn't exist");
+    }
+
     public void removeAircraftFromGraph(){
 
         graph.removeAircraft(this);
@@ -123,11 +135,6 @@ public class Aircraft implements IAgent {
         setNewDecision(decision);
     }
 
-    public void changeDecision(Decision decision){
-        removeAircraftFromGraph();
-        setDecision(decision);
-    }
-
     public Route getRoute() {
         return route;
     }
@@ -151,10 +158,17 @@ public class Aircraft implements IAgent {
             reward += edgeConflict.getReward();
         }
 
-        double rtaReward = Math.abs(rta - getTimeOnRunway()) / 60 * Constants.rtaReward; // in mins
+        double rtaReward;
+        double rtaDeviation = Math.abs(rta - getTimeOnRunway());
+        if(rtaDeviation <= Constants.timeStep){
+            rtaReward = 0;
+        }
+        else {
+            rtaReward = - rtaDeviation / 60 * Constants.rtaReward; // in mins
+        }
 
-        if(decision.isRunwayChanged()){
-            reward += Constants.runwayReward;
+        if (decision.isRunwayChanged()) {
+            reward -= Constants.runwayReward;
         }
 
         this.reward = reward + rtaReward;
@@ -178,20 +192,8 @@ public class Aircraft implements IAgent {
         nodeConflicts.add(nodeConflict);
     }
 
-    public void removeNodeConflict(IConflict nodeConflict){
-        nodeConflicts.remove(nodeConflict);
-    }
-
     public void addEdgeConflict(IConflict edgeConflict){
         edgeConflicts.add(edgeConflict);
-    }
-
-    public void removeEdgeConflict(IConflict edgeConflict){
-        edgeConflicts.remove(edgeConflict);
-    }
-
-    public double getRta() {
-        return rta;
     }
 
     public double getTimeInArc() {
@@ -226,8 +228,13 @@ public class Aircraft implements IAgent {
         return nodeConflicts.size();
     }
 
+    @Override
+    public double getDelayInMin() {
+        return Math.abs(rta - getTimeOnRunway()) / 60;
+    }
+
     public double getTimeOnRunway(){
-        return timeIn + route.getFlyingTime(getSpeed(), getLandingSpeed()); //in seconds
+        return timeIn + route.getFlyingTime(getSpeed(), getLandingSpeed()) + timeInArc; //in seconds
     }
 
     public double getInitialTimeInTMA(){
@@ -280,21 +287,18 @@ public class Aircraft implements IAgent {
             reward += edgeConflict.getReward();
         }
 
-        double rtaReward = Math.abs(rta - getTimeOnRunway() ) / 60 * Constants.rtaReward; //in mins
+        double rtaReward = - Math.abs(rta - getTimeOnRunway() ) / 60 * Constants.rtaReward; //in mins
         result.append("; rta ").append(df.format(rtaReward));
         reward +=rtaReward;
 
         if(decision.isRunwayChanged()){
             result.append("; not preferredRunway ").append(Constants.runwayReward);
-            reward += Constants.runwayReward;
+            reward -= Constants.runwayReward;
         }
 
         result.append("; TotalReward ").append(df.format(reward));
         return result.toString();
     }
-
-
-
 
 
     @Override
@@ -310,17 +314,20 @@ public class Aircraft implements IAgent {
         return Objects.hash(getId());
     }
 
+
+
     @Override
     public String toString() {
         return "Aircraft{" +
                 "id='" + id + '\'' +
                 ", speed=" + speed +
                 ", timeIn=" + timeIn +
+                ", timeInArc=" + timeInArc +
                 ", rta=" + rta +
                 ", reward=" + getReward() +
-                ", vortexCat=" + vortexCat +
-                ", timeInArc=" + timeInArc +
-                ", routes=" + route +
+                //", vortexCat=" + vortexCat +
+                //", routes=" + route +
                 '}';
     }
+
 }

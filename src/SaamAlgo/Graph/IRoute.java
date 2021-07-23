@@ -1,8 +1,6 @@
 package SaamAlgo.Graph;
 
 import SaamAlgo.Graph.Edge.Edge;
-import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Operations.IAgent;
 
 import java.util.List;
 
@@ -16,7 +14,6 @@ public interface IRoute {
 
     /**
      Get the flying time of the route
-     @param aircraft : the aircraft flying
      @return flying time in hours
      */
     double getFlyingTime(double approachSpeed, double landingSpeed);

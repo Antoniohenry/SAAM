@@ -5,12 +5,14 @@ import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Operations.Constants;
 
-public class NodeFlight implements IFlight {
+
+public class NodeFlight implements IFlight, Cloneable {
     private final double entryTime;
     private final Aircraft aircraft;
     private final double exitTime;
 
     public NodeFlight(double time, Aircraft aircraft) {
+        super();
         this.entryTime = time - (Constants.nodeRadius /aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
         if(entryTime < 0){
             throw new Error("Negative entryTime, need an offset on the beginning of simulation ");
@@ -64,7 +66,7 @@ public class NodeFlight implements IFlight {
 
         double criticize = 0;
         if(distance < separation) {
-            criticize = distance / separation;
+            criticize = (separation - distance) / separation;
 
             if (criticize > 1 || criticize < 0) {
                 System.out.println("criticize = " + criticize + "Not between 0 and 1");
@@ -79,7 +81,7 @@ public class NodeFlight implements IFlight {
         }
 
         if (overtaking){
-            criticize += Constants.overtakingReward;
+            criticize = 1;
         }
 
         return criticize;
@@ -111,4 +113,5 @@ public class NodeFlight implements IFlight {
                 ", aircraft=" + aircraft.getId() +
                 '}';
     }
+
 }

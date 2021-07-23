@@ -7,11 +7,11 @@ public class SlidingWindowParameters {
     public enum status {COMPLETED, ONGOING, ACTIVE, PLANNED};
 
     private double initialEntryTMA;
-    private double earliestEntryTMA;
-    private double latestEntryTMA;
+    private final double earliestEntryTMA;
+    private final double latestEntryTMA;
     private double landing;
     private double earliestLanding;
-    private double latestLanding;
+    private final double latestLanding;
 
     public SlidingWindowParameters(double initialEntryTMA, double earliestEntryTMA, double latestEntryTMA, double landing, double earliestLanding, double latestLanding) {
         this.initialEntryTMA = initialEntryTMA;

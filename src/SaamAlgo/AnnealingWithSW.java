@@ -7,25 +7,22 @@ import java.util.Random;
 
 public class AnnealingWithSW {
 
-    public AnnealingWithSW(){
+    public  AnnealingWithSW(IState state, double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold){
 
-        IState state = IOperations.preProcessing();
-        System.out.println("state.stateEvaluation() = " + state.stateEvaluation());
+        long millis = System.currentTimeMillis();
+        System.out.println("state = " + state);
 
         double start = 0;
         double end = Constants.windowLength;
 
         while (start < 25 * 60 * 60){
+            List<? extends IAgent> aircraftsInSW = state.getAircraftInSW(start, end);
+            //System.out.println("SW before SA = " + state.getPerformanceString(aircraftsInSW));
 
-            double temperature = heating(state);
-            double finalTemperature = temperature / 100;
-            int iterations = 20;
-
-            System.out.println("SW before SA = " + state.stateEvaluation().getSWPerformanceString(start, end));
-
+            double temperature = initialTemperature;
             while(temperature > finalTemperature){
                 for(int i = 0; i < iterations; i++) {
-                    List<IAgent> agents = state.getAgentsToHandled(0.8, start, end);
+                    List<IAgent> agents = state.getAgentsToHandled(threshold, aircraftsInSW);
                     //System.out.println("agents.size() = " + agents.size());
                     for (IAgent agent : agents) {
                         IDecision decision = agent.getDecision();
@@ -37,41 +34,36 @@ public class AnnealingWithSW {
                             agent.setDecision(decision);
                         }
                     }
+
+                    /*
+                    List<Integer> perf = state.stateEvaluation().getSWPerformance(start, end);
+                    if(perf.get(0) == 0 &&  perf.get(1) == 0){
+                        break;
+                    }*/
                 }
 
                 //System.out.println("state.stateEvaluation = " + state.stateEvaluation());
-                temperature = decreaseTemperature(temperature);
-
-
+                temperature *= decreasing;
             }
 
-            System.out.println("SW after SA = " + state.stateEvaluation().getSWPerformanceString(start, end));
+            //System.out.println("SW after SA = " + state.getPerformanceString(aircraftsInSW));
 
             start += Constants.windowStep;
             end += Constants.windowStep;
-
-
-            System.out.println("start = " + ((start / 3600) - 1));
+            //System.out.println("start = " + ((start / 3600) - 1));
 
         }
 
-        System.out.println("statePerformance = " + state.stateEvaluation());
+        System.out.println("state = " + state);
+        System.out.println("Computing duration = " + (System.currentTimeMillis() - millis) / 1000 + " seconds");
 
-    }
+        state.toDoc("SW-result");
 
-
-    public double heating(IState state) {
-        return 200;
-    }
-
-
-    public double decreaseTemperature(double temperature) {
-        return temperature * 0.99;
     }
 
 
     public boolean accept(double oldReward, double newReward, double temperature) {
-        return newReward < oldReward || new Random().nextDouble() < Math.exp(-(newReward - oldReward) / temperature);
+        return newReward > oldReward || new Random().nextDouble() < Math.exp((newReward - oldReward) / temperature);
 
     }
 

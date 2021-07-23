@@ -3,8 +3,6 @@ package SaamAlgo.Graph;
 import SaamAlgo.Graph.Edge.Edge;
 import SaamAlgo.Graph.Edge.FinalEdge;
 import SaamAlgo.Graph.Node.Node;
-import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Operations.Constants;
 
 import java.util.List;
 
@@ -27,20 +25,6 @@ public class Route implements IRoute{
     public Node getLastNode(){
         return route.get(route.size() -1).getExitNode();
     }
-
-/*
-    private double setTotalLength(){
-        double length = 0;
-        for(Edge edge : this.route){
-            length += edge.getLength();
-        }
-        return  length;
-    }
-
-    private double getFinalLegLength(){
-        FinalEdge finalEdge = (FinalEdge) route.get(route.size() - 1);
-        return finalEdge.getLength();
-    }*/
 
     public double getFlyingTime(double approachSpeed, double landingSpeed){
         double length = 0;

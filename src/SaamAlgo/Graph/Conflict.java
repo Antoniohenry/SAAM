@@ -14,8 +14,11 @@ public abstract class Conflict implements IConflict{
         this.flight1 = flight1;
         this.flight2 = flight2;
         this.name = name;
-        this.reward = criticize * Constants.conflictReward;
-
+        this.reward = - (0.1 + (criticize * 0.9)) * Constants.conflictReward;
+        /*
+        if(criticize ==1){
+            System.out.println(" OVERTAKING ");
+        }*/
     }
 
 

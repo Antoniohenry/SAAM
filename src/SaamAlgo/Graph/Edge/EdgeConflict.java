@@ -1,11 +1,10 @@
 package SaamAlgo.Graph.Edge;
 
 import SaamAlgo.Graph.Conflict;
-import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.IFlight;
 
 
-public class EdgeConflict extends Conflict implements IConflict {
+public class EdgeConflict extends Conflict {
 
 
     public EdgeConflict(IFlight flight1, IFlight flight2, String name, double criticize) {

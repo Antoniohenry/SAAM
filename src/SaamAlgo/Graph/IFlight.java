@@ -2,8 +2,6 @@ package SaamAlgo.Graph;
 
 import SaamAlgo.Model.Aircraft;
 
-import java.util.Optional;
-
 public interface IFlight {
 
     /**
@@ -37,7 +35,5 @@ public interface IFlight {
      @return time in hours
      */
     double getExitTime();
-
-
 
 }
