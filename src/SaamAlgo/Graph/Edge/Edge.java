@@ -5,7 +5,7 @@ import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Graph.KeyError;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Node.Node;
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 
 import java.util.TreeMap;
 

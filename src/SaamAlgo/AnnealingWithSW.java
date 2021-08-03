@@ -1,6 +1,7 @@
 package SaamAlgo;
 
-import SaamAlgo.Operations.*;
+import SaamAlgo.Model.Constants;
+import SaamAlgo.Interface.*;
 
 import java.util.List;
 import java.util.Random;
@@ -57,7 +58,7 @@ public class AnnealingWithSW {
         System.out.println("state = " + state);
         System.out.println("Computing duration = " + (System.currentTimeMillis() - millis) / 1000 + " seconds");
 
-        state.toDoc("SW-result");
+        state.decisionToDoc("SW-result");
 
     }
 

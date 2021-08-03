@@ -1,15 +1,16 @@
 package SaamAlgo.Model;
 
 import SaamAlgo.Graph.Graph;
+import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Graph.Node.Node;
-import SaamAlgo.Operations.*;
+import SaamAlgo.Interface.*;
 
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FlightSet implements IState, IOperations {
+public class FlightSet implements IState {
 
     private final ArrayList<Aircraft> aircrafts;
     private final Graph graph;
@@ -25,7 +26,7 @@ public class FlightSet implements IState, IOperations {
             getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
             getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
         }
-        else getFlightSetFromFile("DATA/simulation.flights");
+        else getFlightSetFromFile("DATA1/simulation.flights");
 
     }
 
@@ -114,6 +115,14 @@ public class FlightSet implements IState, IOperations {
             if(aircraft.getReward() < worstReward){
                 worstReward = aircraft.getReward();
             }
+
+            /*
+            if(nodeConflict != 0 || edgeConflict != 0){
+                System.out.println("aircraft = " + aircraft.printReward());
+            }
+
+             */
+
         }
 
         return List.of(reward, worstReward, averageDelay /  aircrafts.size(), nodeConflict / 2, edgeConflict / 2);
@@ -172,9 +181,9 @@ public class FlightSet implements IState, IOperations {
 
         if(threshold == 1.5) {
             Random rd = new Random();
-            double totalReward = (double) getTotalPerformance(aircrafts).get(0);
+            double worstReward = (double) getTotalPerformance(aircrafts).get(1);
             for (IAgent aircraft : aircrafts) {
-                if (rd.nextDouble() < (aircraft.getReward() / totalReward)) {
+                if (rd.nextDouble() < (aircraft.getReward() / worstReward)) {
                     criticalFlightSet.add(aircraft);
                 }
             }
@@ -193,7 +202,7 @@ public class FlightSet implements IState, IOperations {
         return getPerformanceString(aircrafts);
     }
 
-    public void toDoc(String pathName){
+    public void decisionToDoc(String pathName){
         FileWriter file;
         try {
             file = new FileWriter(pathName);
@@ -210,6 +219,28 @@ public class FlightSet implements IState, IOperations {
             e.printStackTrace();
         }
 
+    }
+
+    public void toDoc(String pathname){
+        FileWriter file;
+
+        try {
+            file = new FileWriter(pathname);
+
+            for (Node node : graph.getNodes().values()) {
+                file.append("Node : ").append(node.getName()).append(String.valueOf('\n'));
+                file.flush();
+                TreeMap<Double, IFlight> treeMap = node.getFlyingAircrafts();
+                for (double time : treeMap.keySet()) {
+                    Aircraft aircraft = treeMap.get(time).getAircraft();
+                    file.append("Aircraft : ").append(String.valueOf(time)).append(" ").append(aircraft.getPrint());
+                    file.flush();
+                }
+            }
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

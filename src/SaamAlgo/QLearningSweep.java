@@ -1,19 +1,17 @@
 package SaamAlgo;
 
-import SaamAlgo.Operations.IOperations;
-import SaamAlgo.Operations.IState;
+import SaamAlgo.Interface.IState;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class QLearningSweep {
 
     public QLearningSweep(){
 
-        List<Double> range = List.of(0.01, 0.1, 0.2, 0.3);
+        List<Double> range = List.of(-57.5, -65., -70.);
         int maxj = 10;
 
         int tot = maxj * range.size();
@@ -22,18 +20,20 @@ public class QLearningSweep {
 
         try {
             FileWriter fileWriter = new FileWriter("result.txt");
-            fileWriter.append("initialT " + 1E-1 + " finalT " + 1E-5 + " decreasing " + 0.993 + " iterations " + 35 + " threshold " + 0.6 + " epsilon " + "var" + " Qinit " + -52.5 + " alpha " + 0.2 + " gamma " + 0.93 + " \n");
-            fileWriter.append("alpha reward \n");
+            //fileWriter.append("finalL " + 1E-6 + "decreasing " + 0.999 + " iteration " + 40 + " gamma " + 0.9 + " epsilon " + "var");
+            fileWriter.append("initialT " + 550 + " finalT " + 2e-3 + " decreasing " + 0.998 + " iterations " + 45 + " threshold " + 0.7 + " epsilon " + "var" + " Qinit " + "var" + " alpha " + 0.16 + " gamma " + 0.93 + " \n");
+            fileWriter.append("Qinit reward \n");
 
             for(int j = 0; j < maxj; j++) {
                 int i = 1;
 
-                for (double alpha : range) {
+                for (double parameter : range) {
                     long start = System.currentTimeMillis();
-                    IState state = IOperations.preProcessing();
-                    new QLearning(state, 1E-1, 1E-5, 0.993, 35, 0.6, 0.0, -52.5, alpha, 0.93);
+                    IState state = IState.preProcessing();
+                    new QLearning(state, 550, 2E-3, 0.998, 45, 0.7, 0.0, parameter, 0.16, 0.93);
+                    //new QL(state, 1E-6, 0.999, 40, 0.7, -50, 0.5, epsilon);
                     double reward = (double) state.getTotalPerformance(state.getAgents()).get(0);
-                    fileWriter.append(alpha + " " + reward + "\n");
+                    fileWriter.append(parameter + " " + reward + "\n");
                     fileWriter.flush();
 
                     times.add((double) (System.currentTimeMillis() - start) / 1000);
@@ -54,17 +54,6 @@ public class QLearningSweep {
             e.printStackTrace();
         }
 
-    }
-
-    public List<Double> range(double start, double stop, double step){
-        List<Double> range = new LinkedList<>();
-        range.add(start);
-        double val = start;
-        while (val < stop){
-            range.add(val+step);
-            val += step;
-        }
-        return range;
     }
 
 }

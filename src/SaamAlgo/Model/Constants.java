@@ -1,10 +1,10 @@
-package SaamAlgo.Operations;
+package SaamAlgo.Model;
 
 public class Constants {
 
     public static double rtaReward = 1; //en point de reward par minute de retard ou d'avance
     public static double runwayReward = 2;
-    public static double conflictReward = 100;
+    public static double conflictReward = 50;
 
     public static double nodeRadius = 2.2;
 
@@ -23,7 +23,7 @@ public class Constants {
     public static int deltaTInMax = 5  * 60; //in seconds
     public static int deltaTInMin = -1 * 60;
 
-    public static int timeStep = 20; // in Seconds
+    public static int timeStep = 15; // in Seconds
 
     public static double windowLength = 18 * 60; //in seconds
     public static double windowStep = 6 * 60; //in seconds

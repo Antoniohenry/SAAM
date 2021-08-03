@@ -1,17 +1,14 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Operations.Constants;
 import SaamAlgo.Graph.Graph;
 import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.Node.Node;
 import SaamAlgo.Graph.Route;
-import SaamAlgo.Operations.IAgent;
-import SaamAlgo.Operations.IDecision;
+import SaamAlgo.Interface.IAgent;
+import SaamAlgo.Interface.IDecision;
 
 import java.text.DecimalFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static SaamAlgo.Model.Aircraft.vortexCat.*;
 
@@ -40,6 +37,13 @@ public class Aircraft implements IAgent{
     private final SlidingWindowParameters SWParameters;
 
     private final QTable q;
+
+    private LinkedHashMap<Double, Decision> queue = new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Double, Decision> eldest) {
+            return this.size() > 10;
+        }
+    };
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
         super();
@@ -128,6 +132,9 @@ public class Aircraft implements IAgent{
 
         this.decision = newDecision;
         this.graph.addAircraft(this);
+
+        queue.put(getReward(), newDecision);
+
     }
 
     public void setDecision(IDecision decision){
@@ -328,6 +335,17 @@ public class Aircraft implements IAgent{
                 //", vortexCat=" + vortexCat +
                 //", routes=" + route +
                 '}';
+    }
+
+    public String getPrint(){
+        StringBuilder conflicts = new StringBuilder();
+        for(IConflict conflict : nodeConflicts){
+            conflicts.append(conflict.getName()).append(",");
+        }
+        if(getReward() < -20){
+            //System.out.println(printReward());
+        }
+        return id + " " + vortexCat + " " + speed + " " + getReward() + " [" + conflicts + "] \n";
     }
 
 }

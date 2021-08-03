@@ -4,7 +4,7 @@ import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Edge.Edge;
 import SaamAlgo.Graph.Edge.FinalEdge;
 import SaamAlgo.Graph.Node.Node;
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -27,9 +27,9 @@ public class Graph implements IGraph {
         routes = new LinkedList<>();
 
 
-        getNodesFromFile("DATA/nodes.txt");
-        getEdgesFromFile("DATA/links.txt");
-        getRoutesFromFile("DATA/routes.txt");
+        getNodesFromFile("DATA1/nodes.txt");
+        getEdgesFromFile("DATA1/links.txt");
+        getRoutesFromFile("DATA1/routes.txt");
 
     }
 
@@ -167,4 +167,7 @@ public class Graph implements IGraph {
         }
     }
 
+    public HashMap<String, Node> getNodes() {
+        return nodes;
+    }
 }

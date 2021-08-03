@@ -1,4 +1,4 @@
-package SaamAlgo.Operations;
+package SaamAlgo.Interface;
 
 import SaamAlgo.Model.QTable;
 
@@ -23,6 +23,8 @@ public interface IAgent {
 
     IDecision getDecision();
 
-    QTable getQ();
+    default QTable getQ(){return null;}
+
+    default String getPrint(){return this.toString();}
 
 }

@@ -1,8 +1,8 @@
 package SaamAlgo;
 
-import SaamAlgo.Model.Decision;
+import SaamAlgo.Model.Constants;
 import SaamAlgo.Model.QTable;
-import SaamAlgo.Operations.*;
+import SaamAlgo.Interface.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +28,11 @@ public class QLearning {
         List<Double> SWRewardList = new LinkedList<>();
         List<Double> Average = new LinkedList<>();
 
+        alpha = 1;
+
         while (start < 25 * 60 * 60){
 
-            MovingAverage movingAverage = new MovingAverage(iterations);
+            MovingAverage movingAverage = new MovingAverage(45);
 
             List<? extends IAgent> aircraftsInSW = state.getAircraftInSW(start, end);
 
@@ -44,12 +46,13 @@ public class QLearning {
                     List<IAgent> agents = state.getAgentsToHandled(threshold, aircraftsInSW);
                     for (IAgent agent : agents) {
 
-                        Decision decision = (Decision) agent.getDecision();
+                        double oldReward = agent.getReward();
+                        IDecision decision = agent.getDecision();
 
                         QTable q = agent.getQ();
-                        int action = q.getGreedy(decision, temperature);
+                        int action = q.getBoltzmann(decision, temperature);
 
-                        Decision newDecision = q.getDecision(decision, action);
+                        IDecision newDecision = q.getDecision(decision, action);
 
                         /*
                         while (newDecision.equals(decision)){
@@ -61,7 +64,6 @@ public class QLearning {
 
                         agent.setDecision(newDecision);
                         double newReward = agent.getReward();
-
                         q.updateQ(decision, action, newReward, alpha, gamma);
 
                         /*
@@ -86,7 +88,7 @@ public class QLearning {
                 double SWAverage = movingAverage.next(SWReward);
 
 
-                if(((start / 3600) - 1) == 18){
+                if(((start / 3600) - 1) == 5){
                     SWRewardList.add(SWReward);
                     Average.add(SWAverage);
                 }
@@ -125,8 +127,8 @@ public class QLearning {
 
         //state.toDoc("QL-result");
 
-        System.out.println("SWRewardList = " + SWRewardList);
-        System.out.println("Average = " + Average);
+        //System.out.println("SWRewardList = " + SWRewardList);
+        //System.out.println("Average = " + Average);
 
         duration = (System.currentTimeMillis() - millis) / 1000.;
         System.out.println("compute time = " + duration);

@@ -1,7 +1,5 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Operations.Constants;
-
 public class SlidingWindowParameters {
 
     public enum status {COMPLETED, ONGOING, ACTIVE, PLANNED};

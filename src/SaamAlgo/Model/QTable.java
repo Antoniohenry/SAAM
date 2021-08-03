@@ -1,14 +1,17 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Interface.IDecision;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import static java.lang.Double.min;
 
 
 public class QTable {
 
-    private final int numberOfActionsPossible = 7;
+    private final int numberOfActionsPossible = 8;
     private final Random random = new Random();
 
     int dimSpeed;
@@ -48,11 +51,11 @@ public class QTable {
     public double[] getActionReward(Decision decision){
 
         int minimalApproachSpeed;
-        switch (decision.getAircraftCategory()){
+        switch (decision.getCategory()){
             case HEAVY : minimalApproachSpeed = Constants.minimalApproachSpeedH; break;
             case MEDIUM : minimalApproachSpeed = Constants.minimalApproachSpeedM; break;
             default:
-                throw new IllegalStateException("Unexpected value for wake vortex cat: " + decision.getAircraftCategory());
+                throw new IllegalStateException("Unexpected value for wake vortex cat: " + decision.getCategory());
         }
 
 
@@ -85,7 +88,10 @@ public class QTable {
 
     }
 
-    public Decision getDecision(Decision oldDecision, int action){
+    public IDecision getDecision(IDecision oldIDecision, int action){
+
+        Decision oldDecision = (Decision) oldIDecision;
+
         switch (action){
             case 0 : return oldDecision.speedUp();
             case 1 : return oldDecision.speedDown();
@@ -94,17 +100,19 @@ public class QTable {
             case 4 : return oldDecision.timeArcUp();
             case 5 : return oldDecision.timeArcDown();
             case 6 : return oldDecision.runwayChange();
+            case 7 : return new Decision(oldDecision.getSpeed(), oldDecision.getDeltaTIn(), false, oldDecision.getTimeInMP(), oldDecision.getCategory());
             default: throw new Error("unknown action");
         }
     }
 
-    public void updateQ(Decision oldDecision, int action, double reward, double alpha, double gamma){
-        Decision newDecision = getDecision(oldDecision, action);
+    public void updateQ(IDecision oldIDecision, int action, double reward, double alpha, double gamma){
+        Decision newDecision = (Decision) getDecision(oldIDecision, action);
         List<Number> bestAction = getBestAction(newDecision);
-        getActionReward(oldDecision)[action] += alpha * (reward + gamma * ((double) bestAction.get(1)) - getActionReward(oldDecision)[action]);
+        getActionReward((Decision) oldIDecision)[action] += alpha * (reward + gamma * ((double) bestAction.get(1)) - getActionReward((Decision) oldIDecision)[action]);
     }
 
     public int getGreedy(Decision oldDecision, double epsilon){
+
         int action;
 
         if(random.nextDouble() < epsilon){
@@ -115,6 +123,39 @@ public class QTable {
 
         }
         return action;
+    }
+
+    public int getBoltzmann(IDecision oldDecision , double epsilon){
+
+
+
+        double [] qs = getActionReward((Decision) oldDecision).clone();
+
+
+        double mini = Arrays.stream(qs).min().getAsDouble();
+
+
+        double sum = 0;
+        for(int i = 0; i < qs.length; i++){
+            qs[i] = min(Math.exp(((1 - (qs[i] / mini)) / epsilon)), 1E300 / 8);
+            sum += qs[i];
+        }
+
+        double aleat = new Random().nextDouble() * sum;
+
+        double sum_ = 0;
+        for(int i = 0; i < qs.length; i++){
+            sum_ += qs[i];
+            if(sum_ > aleat){
+                if(epsilon < 0.1){
+                    //System.out.println(" ");
+                }
+                return i;
+            }
+        }
+
+        throw new Error("cannot find boltzmann action");
+
     }
 
 

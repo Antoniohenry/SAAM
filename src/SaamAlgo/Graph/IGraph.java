@@ -4,6 +4,8 @@ import SaamAlgo.Graph.Node.Node;
 import SaamAlgo.Model.Aircraft;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public interface IGraph {
 
     /**
@@ -25,4 +27,7 @@ public interface IGraph {
      @param aircraft : the aircraft to remove
      */
     void removeAircraft(Aircraft aircraft);
+
+    public HashMap<String, Node> getNodes();
+
 }

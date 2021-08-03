@@ -3,7 +3,7 @@ package SaamAlgo.Graph.Edge;
 import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 
 
 public class EdgeFlight implements IFlight {

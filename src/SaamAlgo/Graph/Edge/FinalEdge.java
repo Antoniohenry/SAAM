@@ -1,6 +1,6 @@
 package SaamAlgo.Graph.Edge;
 
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Graph.Node.Node;
 

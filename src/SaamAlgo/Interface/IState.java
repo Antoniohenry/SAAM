@@ -1,12 +1,19 @@
-package SaamAlgo.Operations;
+package SaamAlgo.Interface;
 
-import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Model.FlightSet;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface IState extends Serializable {
+public interface IState {
+
+    /** This should
+     * - load a graph
+     * - load a flight set
+     * @return ISate : in this case a flightSet = aircraft with neutral decision on a graph
+     */
+    static IState preProcessing() {
+        return new FlightSet();
+    }
 
 
     List<IAgent> getAgentsToHandled(double threshold, List<? extends IAgent> aircrafts);
@@ -19,6 +26,8 @@ public interface IState extends Serializable {
 
     List<? extends IAgent> getAgents();
 
-    void toDoc(String pathName);
+    void decisionToDoc(String pathName);
+
+    void toDoc(String pathname);
 
 }

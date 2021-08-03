@@ -1,6 +1,6 @@
 package SaamAlgo.Graph;
 
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 
 public abstract class Conflict implements IConflict{
 
@@ -14,7 +14,7 @@ public abstract class Conflict implements IConflict{
         this.flight1 = flight1;
         this.flight2 = flight2;
         this.name = name;
-        this.reward = - (0.1 + (criticize * 0.9)) * Constants.conflictReward;
+        this.reward = - (0.2 + (criticize * 0.8)) * Constants.conflictReward;
         /*
         if(criticize ==1){
             System.out.println(" OVERTAKING ");

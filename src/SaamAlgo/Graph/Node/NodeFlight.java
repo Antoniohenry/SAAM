@@ -3,7 +3,7 @@ package SaamAlgo.Graph.Node;
 import SaamAlgo.Graph.IConflict;
 import SaamAlgo.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Operations.Constants;
+import SaamAlgo.Model.Constants;
 
 
 public class NodeFlight implements IFlight, Cloneable {
@@ -72,7 +72,6 @@ public class NodeFlight implements IFlight, Cloneable {
                 System.out.println("criticize = " + criticize + "Not between 0 and 1");
                 System.out.println("other = " + other);
                 System.out.println("this = " + this);
-                //TODO reproduire cette erreur
             }
         }
 
