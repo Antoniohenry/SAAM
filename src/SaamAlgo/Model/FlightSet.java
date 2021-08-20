@@ -15,7 +15,7 @@ public class FlightSet implements IState {
     private final ArrayList<Aircraft> aircrafts;
     private final Graph graph;
 
-    Comparator<IAgent> comparator = Comparator.comparing(IAgent::getReward);
+    Comparator<IAgent> comparator = Comparator.comparing(IAgent::setAndGetReward);
 
     public FlightSet() {
         super();
@@ -110,7 +110,7 @@ public class FlightSet implements IState {
         for(IAgent aircraft : aircrafts){
             edgeConflict += aircraft.getEdgeConflictNumber();
             nodeConflict += aircraft.getNodeConflictNumber();
-            reward += aircraft.getReward();
+            reward += aircraft.setAndGetReward();
             averageDelay += aircraft.getDelayInMin();
             if(aircraft.getReward() < worstReward){
                 worstReward = aircraft.getReward();
@@ -148,46 +148,61 @@ public class FlightSet implements IState {
             return new LinkedList<>();
         }
         aircrafts.sort(comparator);
+        /*
+        StringBuilder str = new StringBuilder();
+        for(IAgent agent : aircrafts){
+            str.append( agent.getReward() + " ");
+        }
+        System.out.println("\n aircrafts = " + str);
+
+         */
+
         LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
 
         if(threshold < 1){
             double worstSWReward = aircrafts.get(0).getReward();
             for (IAgent aircraft : aircrafts) {
-                if (aircraft.getReward() <= threshold * worstSWReward && aircraft.getReward() < 0) {
+                if ((aircraft.getReward() <= threshold * worstSWReward && aircraft.getReward() < 0) || aircraft.getEdgeConflictNumber() != 0 || aircraft.getNodeConflictNumber() != 0 ) {
                     criticalFlightSet.add(aircraft);
                 }
             }
         }
 
-        if(threshold == 1){
+        if(threshold >=1 && threshold < 2){
+
+            double min = aircrafts.get(0).getReward();
             for (IAgent aircraft : aircrafts) {
-                if (aircraft.getNodeConflictNumber() != 0 || aircraft.getEdgeConflictNumber() !=0) {
+                if (aircraft.getNodeConflictNumber() != 0 || aircraft.getEdgeConflictNumber() != 0) {
                     criticalFlightSet.add(aircraft);
+                    min = aircraft.getReward();
                 }
             }
-
-            if(criticalFlightSet.size() == 0){
-                Random rd = new Random();
-                double totalReward = (double) getTotalPerformance(aircrafts).get(0);
-                for (IAgent aircraft : aircrafts) {
-                    if (rd.nextDouble() < (aircraft.getReward() / totalReward)) {
-                        criticalFlightSet.add(aircraft);
-                    }
+            for (IAgent aircraft : aircrafts) {
+                if(aircraft.getReward() < (threshold - 1) * min) {
+                    criticalFlightSet.add(aircraft);
                 }
             }
 
         }
 
-
-        if(threshold == 1.5) {
+        if(threshold == 2) {
             Random rd = new Random();
-            double worstReward = (double) getTotalPerformance(aircrafts).get(1);
+            double worstReward = aircrafts.get(0).getReward();
             for (IAgent aircraft : aircrafts) {
                 if (rd.nextDouble() < (aircraft.getReward() / worstReward)) {
                     criticalFlightSet.add(aircraft);
                 }
             }
         }
+
+        /*
+        StringBuilder str1 = new StringBuilder();
+        for(IAgent agent : criticalFlightSet){
+            str1.append( agent.getReward() + " ");
+        }
+        System.out.println("critical = " + str1);
+
+         */
 
         return criticalFlightSet;
     }
@@ -208,7 +223,7 @@ public class FlightSet implements IState {
             file = new FileWriter(pathName);
 
             for(Aircraft aircraft : aircrafts){
-                file.append(aircraft.getDecision().toString()).append(String.valueOf(aircraft.getReward())).append(" \n");
+                file.append(aircraft.getDecision().toString()).append(String.valueOf(aircraft.setAndGetReward())).append(" \n");
             }
 
             file.append(getPerformanceString(aircrafts));

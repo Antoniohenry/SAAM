@@ -11,6 +11,8 @@ public interface IAgent {
 
     void removeDecision();
 
+    double setAndGetReward();
+
     double getReward();
 
     int getEdgeConflictNumber();

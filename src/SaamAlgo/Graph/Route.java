@@ -9,12 +9,17 @@ import java.util.List;
 public class Route implements IRoute{
 
     private final List<Edge> route;
-    //private final double length;
+    private double length;
     //private final double finalLegLength;
 
     public Route(List<Edge> route){
         this.route = route;
-        //this.length = setTotalLength();
+
+        int size = route.size();
+        for(int i = 0; i < size - 1; i++ ){
+            this.length += route.get(i).getLength();
+        }
+
         //this.finalLegLength = getFinalLegLength();
     }
 
@@ -27,12 +32,8 @@ public class Route implements IRoute{
     }
 
     public double getFlyingTime(double approachSpeed, double landingSpeed){
-        double length = 0;
-        int size = route.size();
-        for(int i = 0; i < size - 1; i++ ){
-            length += route.get(i).getLength();
-        }
-        double finalLegLength = ((FinalEdge) route.get(size -1)).getLength(landingSpeed);
+
+        double finalLegLength = ((FinalEdge) route.get((route.size()) -1)).getLength(landingSpeed);
 
         double timeInHours = (length - finalLegLength)/approachSpeed + finalLegLength / landingSpeed; // in hours;
         return timeInHours * 3600;

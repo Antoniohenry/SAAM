@@ -53,12 +53,15 @@ public class Node extends Point {
     }
 
     public void computeConflictAndSetReward(double currentKey){
+        IFlight currentAircraft = flyingAircrafts.get(currentKey);
+
         //On remonte la treelist car il peut y avoir plus de 2 avions en conflit
         java.lang.Double nextKey = flyingAircrafts.higherKey(currentKey);
         while (nextKey != null){
-            double criticize = flyingAircrafts.get(currentKey).isInConflict(flyingAircrafts.get(nextKey));
+            IFlight nextAircraft = flyingAircrafts.get(nextKey);
+            double criticize = currentAircraft.isInConflict(nextAircraft);
             if(criticize != 0){
-                IConflict conflict = new NodeConflict(flyingAircrafts.get(currentKey), flyingAircrafts.get(nextKey), name, criticize);
+                IConflict conflict = new NodeConflict(currentAircraft, nextAircraft, name, criticize);
                 conflict.setConflict();
                 nextKey = flyingAircrafts.higherKey(nextKey);
             }
@@ -70,9 +73,10 @@ public class Node extends Point {
         //on redescent la treelist
         java.lang.Double previousKey = flyingAircrafts.lowerKey(currentKey);
         while (previousKey != null){
-            double criticize = flyingAircrafts.get(previousKey).isInConflict(flyingAircrafts.get(currentKey));
+            IFlight previousAircraft = flyingAircrafts.get(previousKey);
+            double criticize = previousAircraft.isInConflict(currentAircraft);
             if(criticize != 0){
-                IConflict conflict = new NodeConflict(flyingAircrafts.get(previousKey), flyingAircrafts.get(currentKey), name, criticize);
+                IConflict conflict = new NodeConflict(previousAircraft, currentAircraft, name, criticize);
                 conflict.setConflict();
                 previousKey = flyingAircrafts.lowerKey(previousKey);
             }

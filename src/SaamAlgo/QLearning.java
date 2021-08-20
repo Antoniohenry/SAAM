@@ -7,13 +7,15 @@ import SaamAlgo.Interface.*;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.Math.min;
+
 public class QLearning {
 
     public double duration;
 
     public QLearning(IState state, double initialTemperature, double finalTemperature, double temperatureDecreasingFactor, int iterations, double threshold, double epsilon, double Qinit, double alpha, double gamma){
         long millis = System.currentTimeMillis();
-        System.out.println(state.toString());
+        //System.out.println(state.toString());
 
         List<Double> reward = new java.util.ArrayList<>(List.of(0.));
         List<Integer> actions = new java.util.ArrayList<>(List.of(0));
@@ -28,11 +30,9 @@ public class QLearning {
         List<Double> SWRewardList = new LinkedList<>();
         List<Double> Average = new LinkedList<>();
 
-        alpha = 1;
-
         while (start < 25 * 60 * 60){
 
-            MovingAverage movingAverage = new MovingAverage(45);
+            MovingAverage movingAverage = new MovingAverage(min(100, iterations));
 
             List<? extends IAgent> aircraftsInSW = state.getAircraftInSW(start, end);
 
@@ -46,7 +46,7 @@ public class QLearning {
                     List<IAgent> agents = state.getAgentsToHandled(threshold, aircraftsInSW);
                     for (IAgent agent : agents) {
 
-                        double oldReward = agent.getReward();
+                        //double oldReward = agent.setAndGetReward();
                         IDecision decision = agent.getDecision();
 
                         QTable q = agent.getQ();
@@ -63,7 +63,7 @@ public class QLearning {
                          */
 
                         agent.setDecision(newDecision);
-                        double newReward = agent.getReward();
+                        double newReward = agent.setAndGetReward();
                         q.updateQ(decision, action, newReward, alpha, gamma);
 
                         /*
@@ -88,10 +88,13 @@ public class QLearning {
                 double SWAverage = movingAverage.next(SWReward);
 
 
+                /*
                 if(((start / 3600) - 1) == 5){
                     SWRewardList.add(SWReward);
                     Average.add(SWAverage);
                 }
+
+                 */
 
                 flag = (SWReward != SWAverage);
 

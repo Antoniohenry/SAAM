@@ -27,10 +27,10 @@ public class AnnealingWithSW {
                     //System.out.println("agents.size() = " + agents.size());
                     for (IAgent agent : agents) {
                         IDecision decision = agent.getDecision();
-                        double oldReward = agent.getReward();
+                        double oldReward = agent.setAndGetReward();
                         IDecision newDecision = decision.getNeighbour();
                         agent.setDecision(newDecision);
-                        double newReward = agent.getReward();
+                        double newReward = agent.setAndGetReward();
                         if (!accept(oldReward, newReward, temperature)) {
                             agent.setDecision(decision);
                         }

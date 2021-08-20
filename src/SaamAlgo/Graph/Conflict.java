@@ -4,6 +4,7 @@ import SaamAlgo.Model.Constants;
 
 public abstract class Conflict implements IConflict{
 
+    static double linear = 0.8;
 
     protected final IFlight flight1;
     protected final IFlight flight2;
@@ -14,13 +15,16 @@ public abstract class Conflict implements IConflict{
         this.flight1 = flight1;
         this.flight2 = flight2;
         this.name = name;
-        this.reward = - (0.2 + (criticize * 0.8)) * Constants.conflictReward;
+        this.reward = - (linear + (criticize * (1- linear))) * Constants.conflictReward;
         /*
         if(criticize ==1){
             System.out.println(" OVERTAKING ");
         }*/
     }
 
+    public static void setLinear(double linear_) {
+        linear = linear_;
+    }
 
     public IFlight getFlight1() {
         return flight1;

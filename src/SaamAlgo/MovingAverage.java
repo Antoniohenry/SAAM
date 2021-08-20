@@ -5,9 +5,9 @@ import java.util.Arrays;
 public class MovingAverage {
     private final double [] window;
     private int index;
-    int size;
+    public int size;
     private double sum;
-    int n;
+    public int n;
 
     public MovingAverage(int size) {
         window = new double[size];

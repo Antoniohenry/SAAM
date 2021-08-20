@@ -114,10 +114,6 @@ public class Decision implements IDecision {
         return aircraftCategory;
     }
 
-    public Boolean getRunwayChange() {
-        return runwayChange;
-    }
-
     public static Decision getNeutralDecision(Aircraft.vortexCat vortexCat){
         return new Decision(Constants.nominalApproachSpeed, 0, false, Constants.standardTimeInArc, vortexCat);
     }
@@ -138,12 +134,12 @@ public class Decision implements IDecision {
         if (this == o) return true;
         if (!(o instanceof Decision)) return false;
         Decision decision = (Decision) o;
-        return Double.compare(decision.getSpeed(), getSpeed()) == 0 && getDeltaTIn() == decision.getDeltaTIn() && Double.compare(decision.getTimeInMP(), getTimeInMP()) == 0 && Objects.equals(getRunwayChange(), decision.getRunwayChange()) && getCategory() == decision.getCategory();
+        return Double.compare(decision.getSpeed(), getSpeed()) == 0 && getDeltaTIn() == decision.getDeltaTIn() && Double.compare(decision.getTimeInMP(), getTimeInMP()) == 0 && Objects.equals(isRunwayChanged(), decision.isRunwayChanged()) && getCategory() == decision.getCategory();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSpeed(), getDeltaTIn(), getRunwayChange(), getTimeInMP(), getCategory());
+        return Objects.hash(getSpeed(), getDeltaTIn(), isRunwayChanged(), getTimeInMP(), getCategory());
     }
 
 }

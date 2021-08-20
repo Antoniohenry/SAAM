@@ -72,7 +72,7 @@ with open("simulation.flights", 'w') as f:
     actualSet_ = getSet()
     initial_number = len(actualSet_.keys())
 
-    new_set = get_new_set(actualSet_, 1.3)
+    new_set = get_new_set(actualSet_, 1.5)
     print(initial_number, len(new_set.keys()))
     for value in new_set.values():
         str = ' '.join([item for item in value])

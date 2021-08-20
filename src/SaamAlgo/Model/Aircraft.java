@@ -38,12 +38,15 @@ public class Aircraft implements IAgent{
 
     private final QTable q;
 
+    /*
     private LinkedHashMap<Double, Decision> queue = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Double, Decision> eldest) {
             return this.size() > 10;
         }
     };
+
+     */
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
         super();
@@ -127,13 +130,18 @@ public class Aircraft implements IAgent{
 
         speed = newDecision.getSpeed();
         timeIn += newDecision.getDeltaTIn(); // in seconds
-        route = graph.getRoute(entry, graph.getADifferentRunway(preferredRunway));
+        if(newDecision.isRunwayChanged()){
+            route = graph.getRoute(entry, graph.getADifferentRunway(preferredRunway));
+        }
+        else {
+            route = graph.getRoute(entry, preferredRunway);
+        }
         timeInArc = newDecision.getTimeInMP();
 
         this.decision = newDecision;
         this.graph.addAircraft(this);
 
-        queue.put(getReward(), newDecision);
+        //queue.put(setAndGetReward(), newDecision);
 
     }
 
@@ -182,9 +190,13 @@ public class Aircraft implements IAgent{
 
     }
 
-    public double getReward() {
+    public double setAndGetReward() {
         this.setReward();
         return this.reward;
+    }
+
+    public double getReward(){
+        return reward;
     }
 
     public String getId() {
@@ -331,21 +343,20 @@ public class Aircraft implements IAgent{
                 ", timeIn=" + timeIn +
                 ", timeInArc=" + timeInArc +
                 ", rta=" + rta +
-                ", reward=" + getReward() +
+                ", reward=" + setAndGetReward() +
                 //", vortexCat=" + vortexCat +
                 //", routes=" + route +
                 '}';
     }
 
     public String getPrint(){
+        deleteConflicts();
         StringBuilder conflicts = new StringBuilder();
         for(IConflict conflict : nodeConflicts){
             conflicts.append(conflict.getName()).append(",");
         }
-        if(getReward() < -20){
-            //System.out.println(printReward());
-        }
-        return id + " " + vortexCat + " " + speed + " " + getReward() + " [" + conflicts + "] \n";
+
+        return id + " " + vortexCat + " " + speed + " " + setAndGetReward() + " [" + conflicts + "] \n";
     }
 
 }

@@ -2,9 +2,7 @@ package SaamAlgo.Model;
 
 import SaamAlgo.Interface.IDecision;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.Double.min;
 
@@ -19,6 +17,8 @@ public class QTable {
     int dimMP;
     int dimRunway;
 
+    private static int qInit = -60;
+
     private final double[][][][][] q;
 
     public QTable(Aircraft aircraft) {
@@ -30,7 +30,7 @@ public class QTable {
 
         q = new double[dimSpeed][dimEntryTime][dimMP][dimRunway][numberOfActionsPossible];
 
-        resetQTable(0);
+        resetQTable(qInit);
 
     }
 
@@ -63,7 +63,7 @@ public class QTable {
         int tma = (decision.getDeltaTIn() - Constants.deltaTInMin) / Constants.timeStep;
         int mp = (int) (decision.getTimeInMP() / Constants.timeStep);
         int runway;
-        if(decision.getRunwayChange()){
+        if(decision.isRunwayChanged()){
             runway = 1;
         }
         else runway = 0;
@@ -111,7 +111,10 @@ public class QTable {
         getActionReward((Decision) oldIDecision)[action] += alpha * (reward + gamma * ((double) bestAction.get(1)) - getActionReward((Decision) oldIDecision)[action]);
     }
 
-    public int getGreedy(Decision oldDecision, double epsilon){
+    public int getGreedy(IDecision oldDecision_, double epsilon){
+        //0.1 5.0E-4 0,992 40 0.7 -80 0,18 0,92 0.3 1 60 -427,122 -6,172 0,953 0 0 18,461
+
+        Decision oldDecision = (Decision) oldDecision_;
 
         int action;
 
@@ -127,18 +130,26 @@ public class QTable {
 
     public int getBoltzmann(IDecision oldDecision , double epsilon){
 
-
-
         double [] qs = getActionReward((Decision) oldDecision).clone();
 
-
-        double mini = Arrays.stream(qs).min().getAsDouble();
-
+        //double mini = Arrays.stream(qs).min().getAsDouble();
 
         double sum = 0;
         for(int i = 0; i < qs.length; i++){
-            qs[i] = min(Math.exp(((1 - (qs[i] / mini)) / epsilon)), 1E300 / 8);
+            //qs[i] = min(Math.exp(((1 - (qs[i] / mini)) / epsilon)), 1E300 / 8);
+
+            //qs[i] = min(((-1/(qs[i] -1)) / epsilon), 1E300 / 8);
+            //null
+
+            qs[i] = min(Math.exp((qs[i]) / epsilon), 1E300 / 8);
+
             sum += qs[i];
+
+        }
+
+        if(sum == 0){
+            System.out.println("random action taken");
+            return random.nextInt(numberOfActionsPossible);
         }
 
         double aleat = new Random().nextDouble() * sum;
@@ -146,10 +157,10 @@ public class QTable {
         double sum_ = 0;
         for(int i = 0; i < qs.length; i++){
             sum_ += qs[i];
-            if(sum_ > aleat){
-                if(epsilon < 0.1){
+            if(sum_ >= aleat){
+                //if(epsilon < 0.1){
                     //System.out.println(" ");
-                }
+                //}
                 return i;
             }
         }
@@ -158,5 +169,7 @@ public class QTable {
 
     }
 
-
+    public static void setqInit(int qInit_) {
+        qInit = qInit_;
+    }
 }

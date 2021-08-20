@@ -23,7 +23,7 @@ public class Constants {
     public static int deltaTInMax = 5  * 60; //in seconds
     public static int deltaTInMin = -1 * 60;
 
-    public static int timeStep = 15; // in Seconds
+    public static int timeStep = 20; // in Seconds
 
     public static double windowLength = 18 * 60; //in seconds
     public static double windowStep = 6 * 60; //in seconds
@@ -39,5 +39,13 @@ public class Constants {
 
     public static double HOURS_TO_SEC = 3600;
     public static double SEC_TO_HOURS = 1/3600.;
+
+    public static void setConflictReward(double conflictReward_){
+        conflictReward = conflictReward_;
+    }
+
+    public static void setRtaReward(double rtaReward_){
+        rtaReward = rtaReward_;
+    }
 
 }
