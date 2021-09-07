@@ -1,8 +1,8 @@
-package SaamAlgo.Graph.Edge;
+package SaamAlgo.Model.Graph.Edge;
 
 import SaamAlgo.Model.Constants;
 import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Node.Node;
 
 public class FinalEdge extends Edge{
 
@@ -15,8 +15,8 @@ public class FinalEdge extends Edge{
 
         double exitTime = entryTime + (getLength() / aircraft.getLandingSpeed()) * Constants.HOURS_TO_SEC + aircraft.getTimeInArc();
         EdgeFlight flight = new EdgeFlight(entryTime, exitTime, aircraft);
-        getFlyingAircraftsIn().put(entryTime, flight);
-        getFlyingAircraftsOut().put(exitTime, flight);
+        getFlyingAircraftIn().put(entryTime, flight);
+        getFlyingAircraftOut().put(exitTime, flight);
     }
 
     public double getLength(double landingSpeed){

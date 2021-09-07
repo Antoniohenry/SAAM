@@ -10,6 +10,10 @@ import java.util.Random;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+/**
+ * This class is only use by the EDA algorithm and GA algorithm
+ */
+@Deprecated
 public class Results {
 
     private List<Result> results;

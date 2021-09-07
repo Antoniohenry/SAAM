@@ -7,7 +7,7 @@ import java.util.*;
 import static java.lang.Double.min;
 
 
-public class QTable {
+public class QTable implements IQTable {
 
     private final int numberOfActionsPossible = 8;
     private final Random random = new Random();
@@ -17,7 +17,7 @@ public class QTable {
     int dimMP;
     int dimRunway;
 
-    private static int qInit = -60;
+    public static int qInit = -60;
 
     private final double[][][][][] q;
 
@@ -88,6 +88,7 @@ public class QTable {
 
     }
 
+    @Override
     public IDecision getDecision(IDecision oldIDecision, int action){
 
         Decision oldDecision = (Decision) oldIDecision;
@@ -105,15 +106,16 @@ public class QTable {
         }
     }
 
+    @Override
     public void updateQ(IDecision oldIDecision, int action, double reward, double alpha, double gamma){
         Decision newDecision = (Decision) getDecision(oldIDecision, action);
         List<Number> bestAction = getBestAction(newDecision);
         getActionReward((Decision) oldIDecision)[action] += alpha * (reward + gamma * ((double) bestAction.get(1)) - getActionReward((Decision) oldIDecision)[action]);
     }
 
+    @Override
     public int getGreedy(IDecision oldDecision_, double epsilon){
         //0.1 5.0E-4 0,992 40 0.7 -80 0,18 0,92 0.3 1 60 -427,122 -6,172 0,953 0 0 18,461
-
         Decision oldDecision = (Decision) oldDecision_;
 
         int action;
@@ -128,21 +130,14 @@ public class QTable {
         return action;
     }
 
-    public int getBoltzmann(IDecision oldDecision , double epsilon){
+    @Override
+    public int getBoltzmann(IDecision oldDecision, double temperature){
 
         double [] qs = getActionReward((Decision) oldDecision).clone();
 
-        //double mini = Arrays.stream(qs).min().getAsDouble();
-
         double sum = 0;
         for(int i = 0; i < qs.length; i++){
-            //qs[i] = min(Math.exp(((1 - (qs[i] / mini)) / epsilon)), 1E300 / 8);
-
-            //qs[i] = min(((-1/(qs[i] -1)) / epsilon), 1E300 / 8);
-            //null
-
-            qs[i] = min(Math.exp((qs[i]) / epsilon), 1E300 / 8);
-
+            qs[i] = min(Math.exp((qs[i]) / temperature), 1E300 / 8);
             sum += qs[i];
 
         }
@@ -152,15 +147,12 @@ public class QTable {
             return random.nextInt(numberOfActionsPossible);
         }
 
-        double aleat = new Random().nextDouble() * sum;
+        double aleat = random.nextDouble() * sum;
 
         double sum_ = 0;
         for(int i = 0; i < qs.length; i++){
             sum_ += qs[i];
             if(sum_ >= aleat){
-                //if(epsilon < 0.1){
-                    //System.out.println(" ");
-                //}
                 return i;
             }
         }
@@ -169,7 +161,4 @@ public class QTable {
 
     }
 
-    public static void setqInit(int qInit_) {
-        qInit = qInit_;
-    }
 }

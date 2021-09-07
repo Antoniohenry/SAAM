@@ -1,4 +1,4 @@
-package SaamAlgo;
+package SaamAlgo.Util;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

@@ -1,12 +1,12 @@
-package SaamAlgo.Graph;
+package SaamAlgo.Model.Graph;
 
-import SaamAlgo.Graph.Edge.Edge;
-import SaamAlgo.Graph.Edge.FinalEdge;
-import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Edge.Edge;
+import SaamAlgo.Model.Graph.Edge.FinalEdge;
+import SaamAlgo.Model.Graph.Node.Node;
 
 import java.util.List;
 
-public class Route implements IRoute{
+public class Route{
 
     private final List<Edge> route;
     private double length;
@@ -20,7 +20,6 @@ public class Route implements IRoute{
             this.length += route.get(i).getLength();
         }
 
-        //this.finalLegLength = getFinalLegLength();
     }
 
     public Node getFirstNode(){
@@ -31,6 +30,10 @@ public class Route implements IRoute{
         return route.get(route.size() -1).getExitNode();
     }
 
+    /**
+     Get the flying time of the route
+     @return flying time in hours
+     */
     public double getFlyingTime(double approachSpeed, double landingSpeed){
 
         double finalLegLength = ((FinalEdge) route.get((route.size()) -1)).getLength(landingSpeed);
@@ -39,6 +42,10 @@ public class Route implements IRoute{
         return timeInHours * 3600;
     }
 
+    /**
+     Get list of Edges of the route (useful to iterate on this route)
+     @return List of Edges composing the route (preferably a linkedList to iterate)
+     */
     public List<Edge> getEdges() {
         return route;
     }

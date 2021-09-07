@@ -1,7 +1,7 @@
-package SaamAlgo.Graph.Edge;
+package SaamAlgo.Model.Graph.Edge;
 
-import SaamAlgo.Graph.Conflict;
-import SaamAlgo.Graph.IFlight;
+import SaamAlgo.Model.Graph.Conflict;
+import SaamAlgo.Model.Graph.IFlight;
 
 
 public class EdgeConflict extends Conflict {

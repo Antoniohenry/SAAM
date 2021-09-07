@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def get_flights_from_data(filename):
     flights = []
     with open(filename) as file:

@@ -10,20 +10,21 @@ public class AnnealingWithSW {
 
     public  AnnealingWithSW(IState state, double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold){
 
-        long millis = System.currentTimeMillis();
+        long millis = System.currentTimeMillis(); // to compute the computational time
         System.out.println("state = " + state);
 
+        //SW parameters
         double start = 0;
         double end = Constants.windowLength;
 
         while (start < 25 * 60 * 60){
-            List<? extends IAgent> aircraftsInSW = state.getAircraftInSW(start, end);
-            //System.out.println("SW before SA = " + state.getPerformanceString(aircraftsInSW));
+            List<? extends IAgent> aircraftInSW = state.getAircraftInSW(start, end);
+            //System.out.println("SW before SA = " + state.getPerformanceString(aircraftInSW));
 
             double temperature = initialTemperature;
             while(temperature > finalTemperature){
                 for(int i = 0; i < iterations; i++) {
-                    List<IAgent> agents = state.getAgentsToHandled(threshold, aircraftsInSW);
+                    List<IAgent> agents = state.getAgentsToHandled(threshold, aircraftInSW);
                     //System.out.println("agents.size() = " + agents.size());
                     for (IAgent agent : agents) {
                         IDecision decision = agent.getDecision();
@@ -36,21 +37,18 @@ public class AnnealingWithSW {
                         }
                     }
 
-                    /*
-                    List<Integer> perf = state.stateEvaluation().getSWPerformance(start, end);
-                    if(perf.get(0) == 0 &&  perf.get(1) == 0){
-                        break;
-                    }*/
                 }
 
                 //System.out.println("state.stateEvaluation = " + state.stateEvaluation());
                 temperature *= decreasing;
             }
 
-            //System.out.println("SW after SA = " + state.getPerformanceString(aircraftsInSW));
+            //System.out.println("SW after SA = " + state.getPerformanceString(aircraftInSW));
 
+            //SW parameters update
             start += Constants.windowStep;
             end += Constants.windowStep;
+
             //System.out.println("start = " + ((start / 3600) - 1));
 
         }

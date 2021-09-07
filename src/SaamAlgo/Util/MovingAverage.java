@@ -1,7 +1,10 @@
-package SaamAlgo;
+package SaamAlgo.Util;
 
 import java.util.Arrays;
 
+/**
+ * This class handle a moving average list
+ */
 public class MovingAverage {
     private final double [] window;
     private int index;
@@ -16,6 +19,10 @@ public class MovingAverage {
         this.n = 0;
     }
 
+    /**
+     * @param val new value ti be add in the list
+     * @return the average of all value in the list
+     */
     public double next(double val) {
 
         if (n < window.length){

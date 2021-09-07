@@ -1,10 +1,10 @@
-package SaamAlgo.Graph;
+package SaamAlgo.Model.Graph;
 
 import SaamAlgo.Model.Constants;
 
 public abstract class Conflict implements IConflict{
 
-    static double linear = 0.8;
+    public static double linear = 0.3;
 
     protected final IFlight flight1;
     protected final IFlight flight2;
@@ -20,10 +20,6 @@ public abstract class Conflict implements IConflict{
         if(criticize ==1){
             System.out.println(" OVERTAKING ");
         }*/
-    }
-
-    public static void setLinear(double linear_) {
-        linear = linear_;
     }
 
     public IFlight getFlight1() {

@@ -1,7 +1,7 @@
-package SaamAlgo.Graph.Node;
+package SaamAlgo.Model.Graph.Node;
 
-import SaamAlgo.Graph.IConflict;
-import SaamAlgo.Graph.IFlight;
+import SaamAlgo.Model.Graph.IConflict;
+import SaamAlgo.Model.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Model.Constants;
 
@@ -72,11 +72,9 @@ public class NodeFlight implements IFlight, Cloneable {
                 System.out.println("criticize = " + criticize + "Not between 0 and 1");
                 System.out.println("other = " + other);
                 System.out.println("this = " + this);
-            }
-        }
 
-        if(criticize < 0 || criticize > 1){
-            throw new Error("Criticize not between 0 and 1");
+                throw new Error("Criticize not between 0 and 1");
+            }
         }
 
         if (overtaking){

@@ -2,7 +2,14 @@ import random as rd
 import copy
 from numpy.random import choice
 
+# files containing the initial set
 files = ["20170711_26L_ARRIVEES.flights", "20170711_27R_ARRIVEES.flights"]
+
+# Percentage of aircraft to add
+percentage = 1.3  # In %, need to be greater than 1
+
+# new file to write the new flight set into
+result = "simulation.flights"
 
 
 def from_string_to_dict(str):
@@ -79,12 +86,12 @@ def get_new_set(actualSet_, augmentation):
     return actualSet_
 
 
-with open("simulation.flights", 'w') as f:
+with open(result, 'w') as f:
     actualSet_ = getSet()
     initial_number = len(actualSet_.keys())
 
-    new_set = get_new_set(actualSet_, 1)
-    print(initial_number, len(new_set.keys()))
+    new_set = get_new_set(actualSet_, percentage)
+    print('initial number of aircraft : ', initial_number, '\n number of aircraft in the new set : ',  len(new_set.keys()))
     for value in new_set.values():
         str = ' '.join([item for item in value])
         f.write(str + '\n')

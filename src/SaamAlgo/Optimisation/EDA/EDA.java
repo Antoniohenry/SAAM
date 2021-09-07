@@ -1,23 +1,24 @@
 package SaamAlgo.Optimisation.EDA;
 
-import SaamAlgo.Graph.Conflict;
 import SaamAlgo.Interface.IState;
 import SaamAlgo.Model.Constants;
-import SaamAlgo.Model.QTable;
+import SaamAlgo.Model.Graph.IConflict;
+import SaamAlgo.Model.IQTable;
 import SaamAlgo.Optimisation.Results;
-import SaamAlgo.TextFileWriter;
+import SaamAlgo.Util.TextFileWriter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class EDA {
 
     public EDA() {
 
         DecimalFormat df = new DecimalFormat("#.####");
 
-        String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\EDA\\EDA result2";
+        String filePath = "src\\\\SaamAlgo\\\\Optimisation\\\\EDA\\\\EDA result2";
 
         int maxj = 3;
         int maxi = 3;
@@ -46,10 +47,10 @@ public class EDA {
             StringBuilder str = new StringBuilder(initialTemperature + " " + finalTemperature + " " + decreasing +  " " + iteration + " " + threshold + " " + qInit + " " + alpha + " " + gamma + " " +linear + " " + rta + " " + conflict);
             System.out.println(str);
 
-            Conflict.setLinear(linear);
+            Constants.setConflictLinear(linear);
             Constants.setRtaReward(rta);
             Constants.setConflictReward(conflict);
-            QTable.setqInit(qInit);
+            Constants.setQ0(qInit);
 
             for(int i = 0; i < maxi ; i++) {
 

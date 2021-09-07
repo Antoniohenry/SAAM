@@ -1,10 +1,10 @@
-package SaamAlgo.Graph.Edge;
+package SaamAlgo.Model.Graph.Edge;
 
-import SaamAlgo.Graph.IConflict;
-import SaamAlgo.Graph.IFlight;
-import SaamAlgo.Graph.KeyError;
+import SaamAlgo.Model.Graph.IConflict;
+import SaamAlgo.Model.Graph.IFlight;
+import SaamAlgo.Model.Graph.KeyError;
 import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Node.Node;
 import SaamAlgo.Model.Constants;
 
 import java.util.TreeMap;
@@ -15,8 +15,8 @@ public class Edge {
     private final Node exitNode;
     private final String name;
     private final Double length;
-    private final TreeMap<Double ,IFlight> flyingAircraftsIn;
-    private final TreeMap<Double, IFlight> flyingAircraftsOut;
+    private final TreeMap<Double ,IFlight> flyingAircraftIn;
+    private final TreeMap<Double, IFlight> flyingAircraftOut;
 
 
     public Edge(Node node1, Node node2, String name) {
@@ -28,8 +28,8 @@ public class Edge {
 
         this.length = Math.sqrt( Math.pow(node1.x - node2.x, 2) + Math.pow(node1.y - node2.y, 2) );
         this.name = name;
-        this.flyingAircraftsIn = new TreeMap<>();
-        this.flyingAircraftsOut = new TreeMap<>();
+        this.flyingAircraftIn = new TreeMap<>();
+        this.flyingAircraftOut = new TreeMap<>();
 
     }
 
@@ -49,20 +49,20 @@ public class Edge {
         return length;
     }
 
-    public TreeMap<Double, IFlight> getFlyingAircraftsIn() {
-        return flyingAircraftsIn;
+    public TreeMap<Double, IFlight> getFlyingAircraftIn() {
+        return flyingAircraftIn;
     }
 
-    public TreeMap<Double, IFlight> getFlyingAircraftsOut() {
-        return flyingAircraftsOut;
+    public TreeMap<Double, IFlight> getFlyingAircraftOut() {
+        return flyingAircraftOut;
     }
 
     public void addFlyingAircraft(Aircraft aircraft, double entryTime){ //entryTime
         double exitTime = entryTime + (length / aircraft.getSpeed()) * Constants.HOURS_TO_SEC;
         IFlight flight = new EdgeFlight(entryTime, exitTime, aircraft);
 
-        IFlight resultIn = flyingAircraftsIn.put(entryTime, flight);
-        IFlight resultOut = flyingAircraftsOut.put(exitTime, flight);
+        IFlight resultIn = flyingAircraftIn.put(entryTime, flight);
+        IFlight resultOut = flyingAircraftOut.put(exitTime, flight);
         if(resultIn == null && resultOut == null) {
             computeConflictsAndSetReward(entryTime, exitTime);
         }else {
@@ -73,14 +73,14 @@ public class Edge {
     }
 
     public void removeAircraft(double entryTime){
-        IFlight flightIn = flyingAircraftsIn.remove(entryTime);
+        IFlight flightIn = flyingAircraftIn.remove(entryTime);
 
         if(flightIn == null){
             throw new KeyError("Try to remove a key that doesn't exist :" + entryTime);
         }
         else {
             double exitTime = flightIn.getExitTime();
-            IFlight flightOut = flyingAircraftsOut.remove(exitTime);
+            IFlight flightOut = flyingAircraftOut.remove(exitTime);
             if(flightOut == null) {
                 throw new KeyError("Try to remove a key that doesn't exist :" + exitTime);
             }
@@ -94,34 +94,34 @@ public class Edge {
     }
 
     public void computeConflictsAndSetRewardForward(double currentKeyIn, double currentKeyOut){
-        Double nextKeyIn = flyingAircraftsIn.higherKey(currentKeyIn);
-        Double nextKeyOut = flyingAircraftsOut.higherKey(currentKeyOut);
+        Double nextKeyIn = flyingAircraftIn.higherKey(currentKeyIn);
+        Double nextKeyOut = flyingAircraftOut.higherKey(currentKeyOut);
 
-        IFlight currentFlight = flyingAircraftsIn.get(currentKeyIn);
+        IFlight currentFlight = flyingAircraftIn.get(currentKeyIn);
 
         boolean next = true;
         while (next && (nextKeyIn !=null) && (nextKeyOut != null)){
 
             next = continueInBothTree(nextKeyIn, nextKeyOut, currentFlight);
 
-            nextKeyIn = flyingAircraftsIn.higherKey(nextKeyIn);
-            nextKeyOut = flyingAircraftsOut.higherKey(nextKeyOut);
+            nextKeyIn = flyingAircraftIn.higherKey(nextKeyIn);
+            nextKeyOut = flyingAircraftOut.higherKey(nextKeyOut);
         }
     }
 
     public void computeConflictsAndSetRewardBackward(double currentKeyIn, double currentKeyOut) {
-        Double previousKeyIn = flyingAircraftsIn.lowerKey(currentKeyIn);
-        Double previousKeyOut = flyingAircraftsOut.lowerKey(currentKeyOut);
+        Double previousKeyIn = flyingAircraftIn.lowerKey(currentKeyIn);
+        Double previousKeyOut = flyingAircraftOut.lowerKey(currentKeyOut);
 
-        IFlight currentFlight = flyingAircraftsIn.get(currentKeyIn);
+        IFlight currentFlight = flyingAircraftIn.get(currentKeyIn);
 
         boolean previous = true;
         while (previous && (previousKeyIn != null) && (previousKeyOut != null)) {
 
             previous = continueInBothTree(previousKeyIn, previousKeyOut, currentFlight);
 
-            previousKeyIn = flyingAircraftsIn.lowerKey(previousKeyIn);
-            previousKeyOut = flyingAircraftsOut.lowerKey(previousKeyOut);
+            previousKeyIn = flyingAircraftIn.lowerKey(previousKeyIn);
+            previousKeyOut = flyingAircraftOut.lowerKey(previousKeyOut);
         }
 
     }
@@ -130,8 +130,8 @@ public class Edge {
 
         boolean continue_ = false;
 
-        IFlight continueFlightIn = flyingAircraftsIn.get(continueKeyIn);
-        IFlight continueFlightOut = flyingAircraftsOut.get(continueKeyOut);
+        IFlight continueFlightIn = flyingAircraftIn.get(continueKeyIn);
+        IFlight continueFlightOut = flyingAircraftOut.get(continueKeyOut);
 
         double criticize = currentFlight.isInConflict(continueFlightIn);
 

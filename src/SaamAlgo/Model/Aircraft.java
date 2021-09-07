@@ -1,9 +1,9 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Graph.Graph;
-import SaamAlgo.Graph.IConflict;
-import SaamAlgo.Graph.Node.Node;
-import SaamAlgo.Graph.Route;
+import SaamAlgo.Model.Graph.Graph;
+import SaamAlgo.Model.Graph.IConflict;
+import SaamAlgo.Model.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Route;
 import SaamAlgo.Interface.IAgent;
 import SaamAlgo.Interface.IDecision;
 
@@ -19,7 +19,7 @@ public class Aircraft implements IAgent{
     public enum vortexCat{HEAVY, MEDIUM, LIGHT}
 
     private final String id;
-    private double speed;
+    private double speed; //in kt
     private Route route;
     private double timeIn; // in seconds
     private final double rta; // in seconds
@@ -36,17 +36,7 @@ public class Aircraft implements IAgent{
 
     private final SlidingWindowParameters SWParameters;
 
-    private final QTable q;
-
-    /*
-    private LinkedHashMap<Double, Decision> queue = new LinkedHashMap<>() {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Double, Decision> eldest) {
-            return this.size() > 10;
-        }
-    };
-
-     */
+    private final IQTable q;
 
     public Aircraft(Graph graph, String id, int speed, double timeIn, double rta, vortexCat vortexCat, Node entry, Node runway, Decision decision) {
         super();
@@ -107,7 +97,6 @@ public class Aircraft implements IAgent{
     }
 
     public void removeAircraftFromGraph(){
-
         graph.removeAircraft(this);
 
         for (IConflict nodeConflict : nodeConflicts){
@@ -140,8 +129,6 @@ public class Aircraft implements IAgent{
 
         this.decision = newDecision;
         this.graph.addAircraft(this);
-
-        //queue.put(setAndGetReward(), newDecision);
 
     }
 
@@ -286,7 +273,7 @@ public class Aircraft implements IAgent{
         return SWParameters.getStatus(start, end);
     }
 
-    public QTable getQ() {
+    public IQTable getQ() {
         return q;
     }
 

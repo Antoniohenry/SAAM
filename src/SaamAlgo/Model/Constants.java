@@ -1,12 +1,14 @@
 package SaamAlgo.Model;
 
+import SaamAlgo.Model.Graph.Conflict;
+
 public class Constants {
 
     public static double rtaReward = 1; //en point de reward par minute de retard ou d'avance
     public static double runwayReward = 5;
     public static double conflictReward = 60;
 
-    public static double nodeRadius = 2.2;
+    public static double nodeRadius = 2.2; // in nm
 
     public static double maxTimeInArc = 4. * 60; //in seconds
     public static double standardTimeInArc = 1. * 60; //in sec
@@ -46,6 +48,14 @@ public class Constants {
 
     public static void setRtaReward(double rtaReward_){
         rtaReward = rtaReward_;
+    }
+
+    public static void setConflictLinear(double linear){
+        Conflict.linear = linear;
+    }
+
+    public static void setQ0(int Q0){
+        QTable.qInit = Q0;
     }
 
 }

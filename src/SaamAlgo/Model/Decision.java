@@ -15,6 +15,7 @@ public class Decision implements IDecision {
     private final Boolean runwayChange;
     private final double timeInMP; //in seconds
     private final Aircraft.vortexCat aircraftCategory;
+    private final Random random = new Random();
 
     public Decision(double speed, int deltaTIn, Boolean runwayChange, double timeInMP, Aircraft.vortexCat vortexCat){
         super();
@@ -76,38 +77,36 @@ public class Decision implements IDecision {
 
     @Override
     public IDecision getNeighbour() {
-        double random = new Random().nextDouble();
+        double nextDouble = random.nextDouble();
 
-        if(random < 0.25){
-            if(new Random().nextBoolean()){ //speed up
+        if(nextDouble < 0.25){
+            if(random.nextBoolean()){ //speed up
                 return speedUp();
               }
             else { //speed down
                 return speedDown();
             }
         }
-        if(0.25 <= random && random < 0.5){
-            if(new Random().nextBoolean()){ //entry time in TMA up
+        if(0.25 <= nextDouble && nextDouble < 0.5){
+            if(random.nextBoolean()){ //entry time in TMA up
                 return TMAUp();
             }
             else {//entry time in TMA down
                 return TMADown();
             }
         }
-        if(0.5 <= random && random < 0.75){//runway change
+        if(0.5 <= nextDouble && nextDouble < 0.75){//runway change
             return runwayChange();
-        }
-        if(0.75 <= random) {//Change the time in the arc
-            if(new Random().nextBoolean()) { //time in arc up
+}
+        if(0.75 <= nextDouble) {//Change the time in the arc
+            if(random.nextBoolean()) { //time in arc up
                 return timeArcUp();
                  }
             else { //time in the arc down
                 return timeArcDown();
                 }
         }
-
         return null;
-
     }
 
     public Aircraft.vortexCat getCategory() {

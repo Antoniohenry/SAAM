@@ -1,4 +1,4 @@
-package SaamAlgo.Graph;
+package SaamAlgo.Model.Graph;
 
 public class KeyError extends Error{
 

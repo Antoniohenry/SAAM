@@ -1,7 +1,7 @@
-package SaamAlgo.Graph.Edge;
+package SaamAlgo.Model.Graph.Edge;
 
-import SaamAlgo.Graph.IConflict;
-import SaamAlgo.Graph.IFlight;
+import SaamAlgo.Model.Graph.IConflict;
+import SaamAlgo.Model.Graph.IFlight;
 import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Model.Constants;
 

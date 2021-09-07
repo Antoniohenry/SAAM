@@ -1,12 +1,13 @@
 package SaamAlgo.Optimisation.GA;
 
-import SaamAlgo.Optimisation.QL;
+import SaamAlgo.QL;
 import SaamAlgo.Optimisation.Results;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class GA {
 
     int populationSize;

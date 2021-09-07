@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+@Deprecated
 public class Result implements Comparable<Result> {
 
     public double initialTemperature;
@@ -47,7 +48,7 @@ public class Result implements Comparable<Result> {
         this.link = link;
     }
 
-    public static Result getTotoFromString(String str){
+    public static Result getResultFromString(String str){
         StringTokenizer tokenizer = new StringTokenizer(str);
         return new Result(Double.parseDouble(tokenizer.nextToken().replace(',', '.')),
                 Double.parseDouble(tokenizer.nextToken().replace(',', '.')),
@@ -79,7 +80,7 @@ public class Result implements Comparable<Result> {
             String line;
             while((line = br.readLine()) != null)
             {
-                results.add(Result.getTotoFromString(line));
+                results.add(Result.getResultFromString(line));
             }
             fr.close();
         }

@@ -4,8 +4,8 @@ import SaamAlgo.Interface.IAgent;
 import SaamAlgo.Interface.IDecision;
 import SaamAlgo.Interface.IState;
 import SaamAlgo.Model.Constants;
-import SaamAlgo.Model.QTable;
-import SaamAlgo.MovingAverage;
+import SaamAlgo.Model.IQTable;
+import SaamAlgo.Util.MovingAverage;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class QLearningEDA {
                         //double oldReward = agent.setAndGetReward();
                         IDecision decision = agent.getDecision();
 
-                        QTable q = agent.getQ();
+                        IQTable q = agent.getQ();
                         int action = q.getBoltzmann(decision, temperature);
 
                         IDecision newDecision = q.getDecision(decision, action);

@@ -1,9 +1,9 @@
-package SaamAlgo.Graph;
+package SaamAlgo.Model.Graph;
 
 import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Graph.Edge.Edge;
-import SaamAlgo.Graph.Edge.FinalEdge;
-import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Edge.Edge;
+import SaamAlgo.Model.Graph.Edge.FinalEdge;
+import SaamAlgo.Model.Graph.Node.Node;
 import SaamAlgo.Model.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Graph implements IGraph {
+public class Graph {
 
     private final HashMap<String, Node> nodes;
     private final HashMap<String, Edge> edges;
@@ -137,6 +137,12 @@ public class Graph implements IGraph {
         }
     }
 
+    /**
+     Get THE Route between a entry Node and an exit Node
+     @param entry The entry point (Node) in TMA
+     @param runway The exit point (Node) ie a runway
+     @return a Route such as specified in Route
+     */
     public Route getRoute(Node entry, Node runway){
         for (Route route : routes) {
             if (route.getFirstNode() == entry && route.getLastNode() == runway) {
@@ -147,16 +153,24 @@ public class Graph implements IGraph {
     }
 
 
+    /**
+     Add an aircraft to the graph, to the Nodes and Edges specified in aircraft.getRoute()
+     @param aircraft : the aircraft to add
+     */
     public void addAircraft(@NotNull Aircraft aircraft){
         double time = aircraft.getTimeIn();
         aircraft.getEntry().addAircraft(aircraft, time); //ajout de l'avion au point d'entré
         for(Edge edge : aircraft.getRoute().getEdges()){
-            edge.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tout les points du parcours sauf l'entré
+            edge.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tous les points du parcours sauf l'entré
             time += edge.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
             edge.getExitNode().addAircraft(aircraft, time);
         }
     }
 
+    /**
+     Remove an aircraft to the graph, to the Nodes and Edges specified in aircraft.getRoute()
+     @param aircraft : the aircraft to remove
+     */
     public void removeAircraft(Aircraft aircraft){
         double time= aircraft.getTimeIn();
         aircraft.getEntry().removeAircraft(time);

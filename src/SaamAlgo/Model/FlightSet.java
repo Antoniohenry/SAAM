@@ -1,8 +1,8 @@
 package SaamAlgo.Model;
 
-import SaamAlgo.Graph.Graph;
-import SaamAlgo.Graph.IFlight;
-import SaamAlgo.Graph.Node.Node;
+import SaamAlgo.Model.Graph.Graph;
+import SaamAlgo.Model.Graph.IFlight;
+import SaamAlgo.Model.Graph.Node.Node;
 import SaamAlgo.Interface.*;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class FlightSet implements IState {
 
-    private final ArrayList<Aircraft> aircrafts;
+    private final ArrayList<Aircraft> aircraft;
     private final Graph graph;
 
     Comparator<IAgent> comparator = Comparator.comparing(IAgent::setAndGetReward);
@@ -20,7 +20,7 @@ public class FlightSet implements IState {
     public FlightSet() {
         super();
         this.graph = new Graph();
-        this.aircrafts = new ArrayList<>();
+        this.aircraft = new ArrayList<>();
 
         getFlightSetFromFile("DATA1/simulation.flights");
 
@@ -79,7 +79,7 @@ public class FlightSet implements IState {
                 }
 
                 if(entryNode.getName().equals("OKIPA") || entryNode.getName().equals("LORNI")){
-                    aircrafts.add(new Aircraft(graph, callsign, (int) speedIn, entryTime, realLandingTime, category, entryNode, runway));
+                    aircraft.add(new Aircraft(graph, callsign, (int) speedIn, entryTime, realLandingTime, category, entryNode, runway));
                 }
 
             }
@@ -94,7 +94,7 @@ public class FlightSet implements IState {
     }
 
     public List<? extends IAgent> getAgents() {
-        return aircrafts;
+        return aircraft;
     }
 
     public List<Number> getTotalPerformance(List<? extends IAgent> aircrafts){
@@ -112,22 +112,13 @@ public class FlightSet implements IState {
                 worstReward = aircraft.getReward();
             }
 
-            /*
-            if(nodeConflict != 0 || edgeConflict != 0){
-                System.out.println("aircraft = " + aircraft.printReward());
-            }
-
-             */
-
         }
-
         return List.of(reward, worstReward, averageDelay /  aircrafts.size(), nodeConflict / 2, edgeConflict / 2);
-
     }
 
-    public String getPerformanceString(List<? extends IAgent> aircrafts){
+    public String getPerformanceString(List<? extends IAgent> aircraft){
         DecimalFormat df = new DecimalFormat("#.####");
-        List<Number> perf = getTotalPerformance(aircrafts);
+        List<Number> perf = getTotalPerformance(aircraft);
 
         return "TotalReward = " + df.format(perf.get(0)) +
                 "  WorstReward = " + df.format(perf.get(1)) +
@@ -138,44 +129,36 @@ public class FlightSet implements IState {
     }
 
 
-    public List<IAgent> getAgentsToHandled(double threshold, List<? extends IAgent> aircrafts){ // in %
+    public List<IAgent> getAgentsToHandled(double threshold, List<? extends IAgent> aircraft){ // in %
 
-        if(aircrafts.size() == 0){
+        if(aircraft.size() == 0){
             return new LinkedList<>();
         }
-        aircrafts.sort(comparator);
-        /*
-        StringBuilder str = new StringBuilder();
-        for(IAgent agent : aircrafts){
-            str.append( agent.getReward() + " ");
-        }
-        System.out.println("\n aircrafts = " + str);
-
-         */
+        aircraft.sort(comparator);
 
         LinkedList<IAgent> criticalFlightSet = new LinkedList<>();
 
         if(threshold < 1){
-            double worstSWReward = aircrafts.get(0).getReward();
-            for (IAgent aircraft : aircrafts) {
-                if ((aircraft.getReward() <= threshold * worstSWReward && aircraft.getReward() < 0) || aircraft.getEdgeConflictNumber() != 0 || aircraft.getNodeConflictNumber() != 0 ) {
-                    criticalFlightSet.add(aircraft);
+            double worstSWReward = aircraft.get(0).getReward();
+            for (IAgent agent : aircraft) {
+                if ((agent.getReward() <= threshold * worstSWReward && agent.getReward() < 0) || agent.getEdgeConflictNumber() != 0 || agent.getNodeConflictNumber() != 0 ) {
+                    criticalFlightSet.add(agent);
                 }
             }
         }
 
         if(threshold >=1 && threshold < 2){
 
-            double min = aircrafts.get(0).getReward();
-            for (IAgent aircraft : aircrafts) {
-                if (aircraft.getNodeConflictNumber() != 0 || aircraft.getEdgeConflictNumber() != 0) {
-                    criticalFlightSet.add(aircraft);
-                    min = aircraft.getReward();
+            double min = aircraft.get(0).getReward();
+            for (IAgent agent : aircraft) {
+                if (agent.getNodeConflictNumber() != 0 || agent.getEdgeConflictNumber() != 0) {
+                    criticalFlightSet.add(agent);
+                    min = agent.getReward();
                 }
             }
-            for (IAgent aircraft : aircrafts) {
-                if(aircraft.getReward() < (threshold - 1) * min) {
-                    criticalFlightSet.add(aircraft);
+            for (IAgent agent : aircraft) {
+                if(agent.getReward() < (threshold - 1) * min) {
+                    criticalFlightSet.add(agent);
                 }
             }
 
@@ -183,34 +166,25 @@ public class FlightSet implements IState {
 
         if(threshold == 2) {
             Random rd = new Random();
-            double worstReward = aircrafts.get(0).getReward();
-            for (IAgent aircraft : aircrafts) {
-                if (rd.nextDouble() < (aircraft.getReward() / worstReward)) {
-                    criticalFlightSet.add(aircraft);
+            double worstReward = aircraft.get(0).getReward();
+            for (IAgent agent : aircraft) {
+                if (rd.nextDouble() < (agent.getReward() / worstReward)) {
+                    criticalFlightSet.add(agent);
                 }
             }
         }
-
-        /*
-        StringBuilder str1 = new StringBuilder();
-        for(IAgent agent : criticalFlightSet){
-            str1.append( agent.getReward() + " ");
-        }
-        System.out.println("critical = " + str1);
-
-         */
 
         return criticalFlightSet;
     }
 
     public List<? extends IAgent> getAircraftInSW(double start, double end){
-        return aircrafts.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE).collect(Collectors.toList());
+        return aircraft.stream().filter(aircraft -> aircraft.getStatus(start, end) == SlidingWindowParameters.status.ACTIVE).collect(Collectors.toList());
     }
 
 
     @Override
     public String toString() {
-        return getPerformanceString(aircrafts);
+        return getPerformanceString(aircraft);
     }
 
     public void decisionToDoc(String pathName){
@@ -218,11 +192,11 @@ public class FlightSet implements IState {
         try {
             file = new FileWriter(pathName);
 
-            for(Aircraft aircraft : aircrafts){
+            for(Aircraft aircraft : aircraft){
                 file.append(aircraft.getDecision().toString()).append(String.valueOf(aircraft.setAndGetReward())).append(" \n");
             }
 
-            file.append(getPerformanceString(aircrafts));
+            file.append(getPerformanceString(aircraft));
 
             file.flush();
 
@@ -241,7 +215,7 @@ public class FlightSet implements IState {
             for (Node node : graph.getNodes().values()) {
                 file.append("Node : ").append(node.getName()).append(String.valueOf('\n'));
                 file.flush();
-                TreeMap<Double, IFlight> treeMap = node.getFlyingAircrafts();
+                TreeMap<Double, IFlight> treeMap = node.getFlyingAircraft();
                 for (double time : treeMap.keySet()) {
                     Aircraft aircraft = treeMap.get(time).getAircraft();
                     file.append("Aircraft : ").append(String.valueOf(time)).append(" ").append(aircraft.getPrint());

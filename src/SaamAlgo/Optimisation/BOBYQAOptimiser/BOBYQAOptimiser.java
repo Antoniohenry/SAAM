@@ -1,6 +1,6 @@
 package SaamAlgo.Optimisation.BOBYQAOptimiser;
 
-import SaamAlgo.Optimisation.QL;
+import SaamAlgo.QL;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
@@ -12,7 +12,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 
 public class BOBYQAOptimiser {
 
-    static String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\BOBYQAOptimiser\\BOBY";
+    static String filePath = "src\\\\SaamAlgo\\\\Optimisation\\\\BOBYQAOptimiser\\\\BOBY";
 
 
     private final MultivariateFunction objective = new MultivariateFunction() {
