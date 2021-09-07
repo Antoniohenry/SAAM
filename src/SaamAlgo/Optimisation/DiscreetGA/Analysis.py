@@ -5,7 +5,7 @@ import numpy.ma as ma
 #import scipy.stats.spearmanr as SPCor
 
 
-filename = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\DiscreetGA50"
+filename = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\DiscreetGA120"
 
 tab = []
 with open(filename) as file:
@@ -28,19 +28,19 @@ with open(filename) as file:
 abscisse = { #0: "Initial Temperature",
              #1: "Final Temperature",
              #2: "Decreasing",
-             3: "Itertion",
+             #3: "Iteration",
              #4: "Threshold",
-             5: "Q Initial",
-             6: "Alpha",
+             #5: "Q Initial",
+             #6: "Alpha",
              7: "Gamma",
-             8: "Linear",
+             #8: "Linear",
              #9: "Reward RTA",
              #10: "Reward Conflict"
              }
 
-ordonnee = {#11: "Total Reward",
+ordonnee = {11: "Total Reward",
             #12: "Worst Reward",
-            13: "Average Delay",
+            #13: "Average Delay",
             #14: "Node Conflict",
             #15: "Link Conflict",
             #16: "Computational Time"
@@ -73,7 +73,7 @@ for a in abscisse.keys():
 
         largeur = maxi - mini
 
-        plt.figure()
+        plt.figure(figsize=(6.5, 5), dpi=200)
         plt.xlabel(abscisse[a])
         plt.ylabel(ordonnee[o])
         plt.boxplot(list(plot.values()), positions=list(plot.keys()), widths=largeur/30, whis=1.5)

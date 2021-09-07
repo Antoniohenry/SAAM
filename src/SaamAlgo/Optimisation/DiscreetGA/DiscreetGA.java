@@ -7,20 +7,20 @@ import java.util.*;
 
 public class DiscreetGA {
 
-    static String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\DiscreetGA51";
+    static String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\DiscreetGA600";
 
     private final Random generator = new Random();
 
     private final double[][] parameters = {
-            {3000, 2000, 1000},
+            {2500, 3500, 4500, 5500},
             {1},
-            {0.992, 0.993},
-            {70, 80},
+            {0.992},
+            {80},
             {0.7},
-            {-180, -160, -140, -120},
-            {0.18, 0.2, 0.22},
+            {-160, -140, -120, -100},
+            {0.15, 0.18, 0.21, 0.24},
             {0.84, 0.86, 0.88},
-            {0.0, 0.1, 0.2},
+            {0.3},
             {1},
             {60}};
 
@@ -31,25 +31,29 @@ public class DiscreetGA {
 
         init();
 
-        for(int it = 0; it < 4; it++) {
+        for(int it = 0; it < 5; it++) {
 
-            List<int[]> newPop = mutation(cross(selection(25)), 0.2);
+            List<int[]> newPop = mutation(cross(selection(10)), 0.2);
             for (int[] para : newPop) {
                 population.put(function(para), para);
             }
         }
 
-
     }
 
     private void init() {
 
+        /*
         int iteration = 1;
         for (double[] doubles : parameters) {
             iteration *= doubles.length;
         }
 
-        iteration = iteration / 10;
+        iteration = iteration / 15;
+
+         */
+
+        int iteration = 75;
 
         for (int j = 0; j < iteration; j++){
 
@@ -75,7 +79,7 @@ public class DiscreetGA {
             statistics.addValue(ql.totalReward);
         }
 
-        return statistics.getMean();
+        return statistics.getMean() - statistics.getStandardDeviation() ;
     }
 
     private List<int []> selection(int size){
@@ -122,7 +126,7 @@ public class DiscreetGA {
 
         }
 
-        newOnes.addAll(selected);
+        //newOnes.addAll(selected);
 
         return newOnes;
 

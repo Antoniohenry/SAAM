@@ -5,6 +5,7 @@ import SaamAlgo.Interface.IAgent;
 import SaamAlgo.Interface.IDecision;
 import SaamAlgo.Interface.IState;
 import SaamAlgo.Model.Constants;
+import SaamAlgo.Model.Decision;
 import SaamAlgo.Model.QTable;
 import SaamAlgo.MovingAverage;
 import SaamAlgo.TextFileWriter;
@@ -37,16 +38,11 @@ public class QL {
         //System.out.println(state.toString());
         //state.toDoc("Print/firstState");
 
-        //List<Double> reward = new java.util.ArrayList<>(List.of(0.));
-        //List<Integer> actions = new java.util.ArrayList<>(List.of(0));
-        MovingAverage aircraftMovingAverage = new MovingAverage(100);
-        List<Double> aircraftAverage = new LinkedList<>();
+        MovingAverage dataAverage = new MovingAverage(3);
+        List<Double> data = new LinkedList<>();
 
         double start = 0;
         double end = Constants.windowLength;
-
-        //List<Double> SWRewardList = new LinkedList<>();
-        //List<Double> Average = new LinkedList<>();
 
         while (start < 25 * 60 * 60){
 
@@ -73,13 +69,6 @@ public class QL {
 
                         IDecision newDecision = q.getDecision(decision, action);
 
-                        /*
-                        while (newDecision.equals(decision)){
-                            action = q.getGreedy(decision, 1); //To avoid being stuck on bound
-                            newDecision = q.getDecision(decision, action);
-                        }
-
-                         */
 
                         agent.setDecision(newDecision);
                         double newReward = agent.setAndGetReward();
@@ -87,18 +76,12 @@ public class QL {
 
                         /*
                         if (agent.getId().equals("AFR565")) {
-                            //reward.add(agent.getReward());
-                            //actions.add(action);
-                            aircraftAverage.add(aircraftMovingAverage.next(agent.getReward()));
+                            double toto = agent.getQ().getActionReward((Decision) decision)[action];
+                            data.add(dataAverage.next(toto));
                         }
-
-                         */
-
-
+                        */
 
                     }
-
-
 
                 }
 
@@ -109,33 +92,22 @@ public class QL {
                 double SWAverage = movingAverage.next(SWReward);
 
 
-                /*
+
+
                 if(((start / 3600) - 1) == 5){
-                    SWRewardList.add(SWReward);
-                    Average.add(SWAverage);
+                    data.add(dataAverage.next(SWAverage));
                 }
 
-                 */
 
                 flag = (SWReward != SWAverage);
 
                 if(movingAverage.size > movingAverage.n){
                     flag = true;
                 }
-                /*
-                else {
-                    if(!flag){
-                        System.out.println("SWReward = " + SWReward);
-                        System.out.println("temperature = " + temperature);
-                     }
-                }
-
-                 */
 
             }
 
             //System.out.println("temperature = " + temperature/temperatureDecreasingFactor);
-
 
             //System.out.println("SW after QL = " + state.stateEvaluation().getSWPerformanceString(start, end));
 
@@ -148,19 +120,17 @@ public class QL {
 
         //System.out.println(state);
 
-        //System.out.println("reward = " + reward);
-
-        //System.out.println("actions = " + actions);
-
         //state.toDoc("QL-result");
 
-        //System.out.println("SWRewardList = " + SWRewardList);
-        //System.out.println("Average = " + Average);
 
         duration = (System.currentTimeMillis() - beginning) / 1000.;
         //System.out.println("compute time = " + duration);
 
         List<Number> perf = state.getTotalPerformance(state.getAgents());
+
+        if( (int) perf.get(3) + (int) perf.get(4) > 0){
+            System.out.println(" conflict ");
+        }
 
         //System.out.println(str1);
         StringBuilder str1 = new StringBuilder();
@@ -174,8 +144,7 @@ public class QL {
 
         //state.toDoc("Print/lastState");
 
-        //System.out.println("aircraftAverage = " + aircraftAverage);
-
+        System.out.println("data = " + data);
     }
 
 }

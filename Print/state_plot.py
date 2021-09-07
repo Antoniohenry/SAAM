@@ -55,37 +55,45 @@ def plot_node(node, data, offset):
     plt.show()
 
 
-def subplot(ax, node, data, offset, window_length):
+def subplot(ax, node, data, offset, window_length, r, t):
     aircrafts = data[node]
     ax.set_title(node)
     for aircraft in aircrafts:
         if aircraft[0] > offset and aircraft[0] < offset + window_length:
             color = 'blue' if (len(aircraft[5]) == 0) else 'red'
-            ax.plot([aircraft[0], aircraft[0]], [0.1, aircraft[4]], color=color, linewidth=1)
+            ax.plot([aircraft[0], aircraft[0]], [0.1, aircraft[4]], color=color, linewidth=1.15)
 
     x_ticks = np.arange(offset, offset + window_length + 1, 1 * 60 * 60)
     x_tick_labels = [round(tick / 3600, 2) for tick in x_ticks]
     ax.set_xticks(x_ticks)
     ax.set_xticklabels(x_tick_labels)
-    ax.set(xlabel='time', ylabel='reward')
+    if(r):
+        ax.set(ylabel='Reward')
+    if(t):
+        ax.set(xlabel='Time [Hours]')
 
 
-def get_plot(data, offset, window_length):
-    fig, axs = plt.subplots(4, 2, figsize=(11, 9))
-    subplot(axs[0, 0], 'LORNI', data, offset, window_length)
-    subplot(axs[1, 0], 'PG562', data, offset, window_length)
-    subplot(axs[2, 0], 'IF_27R', data, offset, window_length)
-    subplot(axs[3, 0], 'RWY_27R', data, offset, window_length)
-    subplot(axs[0, 1], 'OKIPA', data, offset, window_length)
-    subplot(axs[1, 1], 'PG564', data, offset, window_length)
-    subplot(axs[2, 1], 'IF_26L', data, offset, window_length)
-    subplot(axs[3, 1], 'RWY_26L', data, offset, window_length)
+def get_plot(data, offset, window_length, name):
+    plt.rc('axes', titlesize=10)
+    fig, axs = plt.subplots(4, 2, figsize=(8, 5), dpi=300, sharex=True, sharey=True)
+    subplot(axs[0, 0], 'LORNI', data, offset, window_length, True, False)
+    subplot(axs[1, 0], 'PG562', data, offset, window_length, True, False)
+    subplot(axs[2, 0], 'IF_27R', data, offset, window_length, True, False)
+    subplot(axs[3, 0], 'RWY_27R', data, offset, window_length, True, True)
+    subplot(axs[0, 1], 'OKIPA', data, offset, window_length, False, False)
+    subplot(axs[1, 1], 'PG564', data, offset, window_length, False, False)
+    subplot(axs[2, 1], 'IF_26L', data, offset, window_length, False, False)
+    subplot(axs[3, 1], 'RWY_26L', data, offset, window_length, False, True)
+
     fig.tight_layout()
-    plt.savefig('lastState.png')
+    plt.savefig(name + '1.png')
     #plt.show()
 
 
+data = get_data("firststate")
+get_plot(data, 8 * 3600, 2.5 * 3600, "firstState1")
+
 data = get_data("laststate")
-get_plot(data, 8 * 3600, 4 * 3600)
+get_plot(data, 8 * 3600, 2.5 * 3600, "lastState1")
 #plot_node('OKIPA', data, 6 * 3600)
 

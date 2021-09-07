@@ -25,15 +25,16 @@ public class Saam {
 
         //new SA();
 
-        new DiscreetGA();
+        //new DiscreetGA();
 
-        //new QL(5000, 1, 0.98, 30, 0.7, -150, 0.18, 0.9, 0.3, 1, 60, "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\DiscreetGA" );
+
+        for(int i =0; i <1; i++) {
+            new QL(2000, 1, 0.99, 30, 0.7, -150, 0.2, 0.88, 0.3, 1, 60, "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\100it");
+        }
 
         //GA.init(200);
 
         //state.toDoc("Q_result.txt");
-
-
 
     }
 }

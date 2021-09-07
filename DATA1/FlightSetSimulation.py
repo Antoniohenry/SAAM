@@ -1,5 +1,6 @@
 import random as rd
 import copy
+from numpy.random import choice
 
 files = ["20170711_26L_ARRIVEES.flights", "20170711_27R_ARRIVEES.flights"]
 
@@ -44,22 +45,32 @@ def getSet():
 
 def get_possibility(set):
     possibilities = []
+    weight = []
     previous_key = 0
+    sum = 0
     for key in sorted(set.keys()):
         if previous_key + 120 < key:
             possibilities.append((previous_key + 60, key - 60))
-    return possibilities
+            weight.append(120/(key - previous_key))
+            sum += 120/(key - previous_key)
+        previous_key = key
+
+    for i in range(len(weight)):
+        weight[i] = weight[i]/sum
+
+    return possibilities, weight
 
 
 def get_new_set(actualSet_, augmentation):
     initial_number = len(actualSet_.keys())
-    possibilities = get_possibility(actualSet_)
+    possibilities, weight = get_possibility(actualSet_)
     new_aircrafts = rd.sample(list(actualSet_.keys()), k=(int(initial_number * (augmentation - 1))))
 
     while (len(new_aircrafts) != 0) and (possibilities != 0):
 
-        possibilities = get_possibility(actualSet_)
-        possibility = rd.choice(possibilities)
+        possibilities, weight = get_possibility(actualSet_)
+        index_possibility = choice([i for i in range(len(possibilities))], 1, p=weight)
+        possibility = possibilities[index_possibility[0]]
 
         time = rd.uniform(possibility[0], possibility[1])
         new_aircraft = new_aircrafts.pop()
@@ -72,7 +83,7 @@ with open("simulation.flights", 'w') as f:
     actualSet_ = getSet()
     initial_number = len(actualSet_.keys())
 
-    new_set = get_new_set(actualSet_, 1.5)
+    new_set = get_new_set(actualSet_, 1)
     print(initial_number, len(new_set.keys()))
     for value in new_set.values():
         str = ' '.join([item for item in value])

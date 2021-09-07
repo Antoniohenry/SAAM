@@ -22,11 +22,7 @@ public class FlightSet implements IState {
         this.graph = new Graph();
         this.aircrafts = new ArrayList<>();
 
-        if(false) {
-            getFlightSetFromFile("DATA/20170711_26L_ARRIVEES.flights");
-            getFlightSetFromFile("DATA/20170711_27R_ARRIVEES.flights");
-        }
-        else getFlightSetFromFile("DATA1/simulation.flights");
+        getFlightSetFromFile("DATA1/simulation.flights");
 
     }
 
