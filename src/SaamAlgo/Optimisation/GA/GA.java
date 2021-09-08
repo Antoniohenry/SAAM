@@ -14,7 +14,7 @@ public class GA {
 
     DecimalFormat df = new DecimalFormat("#.####");
 
-    static String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\GA\\GA";
+    static String filePath = "src\\\\SaamAlgo\\\\Optimisation\\\\GA\\\\GA";
 
     public GA(int populationSize) {
         this.populationSize = populationSize;

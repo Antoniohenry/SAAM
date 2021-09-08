@@ -6,9 +6,9 @@ import SaamAlgo.Interface.*;
 import java.util.List;
 import java.util.Random;
 
-public class AnnealingWithSW {
+public class SimulatedAnnealing {
 
-    public  AnnealingWithSW(double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold, double linear, int rta, int conflict){
+    public SimulatedAnnealing(double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold, double linear, int rta, int conflict){
 
         long millis = System.currentTimeMillis(); // to compute the computational time
 
@@ -25,7 +25,7 @@ public class AnnealingWithSW {
 
         while (start < 25 * 60 * 60){
             List<? extends IAgent> aircraftInSW = state.getAircraftInSW(start, end);
-            //System.out.println("SW before SA = " + state.getPerformanceString(aircraftInSW));
+            //System.out.println("SW before SimulatedAnnealing = " + state.getPerformanceString(aircraftInSW));
 
             double temperature = initialTemperature;
             while(temperature > finalTemperature){
@@ -49,7 +49,7 @@ public class AnnealingWithSW {
                 temperature *= decreasing;
             }
 
-            //System.out.println("SW after SA = " + state.getPerformanceString(aircraftInSW));
+            //System.out.println("SW after SimulatedAnnealing = " + state.getPerformanceString(aircraftInSW));
 
             //SW parameters update
             start += Constants.windowStep;

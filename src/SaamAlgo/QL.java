@@ -161,7 +161,7 @@ public class QL {
         //state.toDoc("Print/lastState");
 
         // data contains whatever has been added all along the algorithm
-        System.out.println("data = " + data);
+        //System.out.println("data = " + data);
     }
 
 }

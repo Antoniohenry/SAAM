@@ -23,7 +23,7 @@ public class BOBYQAOptimiser {
             double sum = 0;
             for(int i = 0; i < maxi; i++) {
 
-                QL ql = new QL(point[0] * 500, 1, 0.995, (int) (point[1] * 30), 0.7, (int) (point[2] *(-100)), point[3] * 0.99, point[4] * 0.3, 0.3, 1, 60, filePath);
+                QL ql = new QL(point[0] * 500, 1, 0.99, (int) (point[1] * 30), 0.7, (int) (point[2] *(-100)), point[3] * 0.99, point[4] * 0.3, 0.3, 1, 60, filePath);
 
                 sum += ql.totalReward;
 

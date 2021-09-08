@@ -6,7 +6,7 @@ from numpy.random import choice
 files = ["20170711_26L_ARRIVEES.flights", "20170711_27R_ARRIVEES.flights"]
 
 # Percentage of aircraft to add
-percentage = 1.3  # In %, need to be greater than 1
+percentage = 1.  # In %, need to be greater than 1
 
 # new file to write the new flight set into
 result = "simulation.flights"

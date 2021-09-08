@@ -11,7 +11,7 @@ import static java.lang.Math.min;
 
 public class SA {
 
-    static String filePath = "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\SA\\SA";
+    static String filePath = "src\\\\SaamAlgo\\\\Optimisation\\\\SA\\\\SA";
 
     private final Random generator = new Random();
 
