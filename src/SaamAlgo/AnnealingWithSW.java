@@ -8,9 +8,15 @@ import java.util.Random;
 
 public class AnnealingWithSW {
 
-    public  AnnealingWithSW(IState state, double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold){
+    public  AnnealingWithSW(double initialTemperature, double finalTemperature, double decreasing, int iterations, double threshold, double linear, int rta, int conflict){
 
         long millis = System.currentTimeMillis(); // to compute the computational time
+
+        Constants.setConflictLinear(linear);
+        Constants.setRtaReward(rta);
+        Constants.setConflictReward(conflict);
+
+        IState state = IState.preProcessing();
         System.out.println("state = " + state);
 
         //SW parameters

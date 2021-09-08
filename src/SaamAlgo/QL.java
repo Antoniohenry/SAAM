@@ -48,7 +48,7 @@ public class QL {
         StringBuilder str = new StringBuilder( initialTemperature + " " + finalTemperature + " " + df.format(decreasing) +  " " + iteration + " " + threshold + " " + qInit + " " + df.format(alpha) + " " + df.format(gamma) + " " +linear + " " + rta + " " + conflict);
         System.out.print(str);
 
-        IState state = IState.preProcessing();;
+        IState state = IState.preProcessing();
         //System.out.println(state.toString());
         //state.toDoc("Print/firstState");
 
