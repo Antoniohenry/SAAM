@@ -10,7 +10,7 @@ public class Constants {
 
     public static double nodeRadius = 2.2; // in nm
 
-    public static double maxTimeInArc = 4. * 60; //in seconds
+    public static double maxTimeInArc = 5. * 60; //in seconds
     public static double standardTimeInArc = 1. * 60; //in sec
 
     public static int nominalApproachSpeed = 250;

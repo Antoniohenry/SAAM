@@ -16,12 +16,12 @@ public class Saam {
 
         //new BOBYQAOptimiser();
 
-        new SA(1000, 1, 0.99);
+        //new SA(1000, 1, 0.99);
 
         //new DiscreetGA(2, 1, 1, 0.2);
 
 
-        //new QL(2000, 1, 0.99, 30, 0.7, -150, 0.2, 0.88, 0.3, 1, 60, "C:\\Users\\antoi\\IdeaProjects\\SAAMAlgo\\src\\SaamAlgo\\Optimisation\\DiscreetGA\\toto");
+        new QL(2000, 1, 0.99, 30, 0.7, -150, 0.2, 0.88, 0.3, 1, 60, "Print\\\\Results\\\\total");
 
 
     }

@@ -202,6 +202,9 @@ public class Aircraft implements IAgent{
         edgeConflicts.add(edgeConflict);
     }
 
+    /**
+     * @return in seconds
+     */
     public double getTimeInArc() {
         return timeInArc;
     }
@@ -239,8 +242,11 @@ public class Aircraft implements IAgent{
         return Math.abs(rta - getTimeOnRunway()) / 60;
     }
 
+    /**
+     * @return in seconds
+     */
     public double getTimeOnRunway(){
-        return timeIn + route.getFlyingTime(getSpeed(), getLandingSpeed()) + timeInArc; //in seconds
+        return timeIn + route.getFlyingTime(this) * Constants.HOURS_TO_SEC;
     }
 
     public double getInitialTimeInTMA(){
@@ -344,6 +350,18 @@ public class Aircraft implements IAgent{
         }
 
         return id + " " + vortexCat + " " + speed + " " + setAndGetReward() + " [" + conflicts + "] \n";
+    }
+
+    public String toDoc(){
+        DecimalFormat df = new DecimalFormat("##");
+        return id + " " +
+        df.format(getTimeIn()) + " " +
+                df.format(getDelayInMin() * 60) + " " +
+                df.format(timeInArc) + " " +
+                df.format(decision.getDeltaTIn()) + " " +
+                (decision.isRunwayChanged() ? 1 : 0) + " " +
+                df.format(decision.getSpeed()) + " " +
+                df.format(getNodeConflictNumber() + getEdgeConflictNumber());
     }
 
 }

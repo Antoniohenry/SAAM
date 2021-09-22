@@ -1,6 +1,7 @@
 package SaamAlgo.Model.Graph;
 
 import SaamAlgo.Model.Aircraft;
+import SaamAlgo.Model.Graph.Edge.Arc;
 import SaamAlgo.Model.Graph.Edge.Edge;
 import SaamAlgo.Model.Graph.Edge.FinalEdge;
 import SaamAlgo.Model.Graph.Node.Node;
@@ -15,12 +16,11 @@ import java.util.*;
 public class Graph {
 
     private final HashMap<String, Node> nodes;
-    private final HashMap<String, Edge> edges;
+    private final HashMap<String, Edge > edges;
     private final List<Route> routes;
     public Set<Node> runways;
 
     public Graph() {
-        super();
         nodes = new HashMap<>();
         edges = new HashMap<>();
         runways = new HashSet<>();
@@ -70,6 +70,10 @@ public class Graph {
                 String exit = tokenizer.nextToken();
 
                 String name = entry + '-' + exit;
+
+                if(exit.startsWith("IF")){
+                    edges.put(name, new Arc(nodes.get(entry), nodes.get(exit), name));
+                }
 
                 if(exit.startsWith("RWY")){
                     edges.put(name, new FinalEdge(nodes.get(entry), nodes.get(exit), name));

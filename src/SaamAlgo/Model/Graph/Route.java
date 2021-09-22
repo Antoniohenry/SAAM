@@ -1,5 +1,7 @@
 package SaamAlgo.Model.Graph;
 
+import SaamAlgo.Model.Aircraft;
+import SaamAlgo.Model.Graph.Edge.Arc;
 import SaamAlgo.Model.Graph.Edge.Edge;
 import SaamAlgo.Model.Graph.Edge.FinalEdge;
 import SaamAlgo.Model.Graph.Node.Node;
@@ -8,15 +10,20 @@ import java.util.List;
 
 public class Route{
 
-    private final List<Edge> route;
+    private final List<? extends Edge> route;
     private double length;
+    private final Arc arc;
+    private final FinalEdge finalEdge;
     //private final double finalLegLength;
 
-    public Route(List<Edge> route){
+    public Route(List<? extends Edge> route){
         this.route = route;
 
+        arc = route.get(route.size() -2).toArc();
+        finalEdge = (FinalEdge) route.get((route.size() - 1));
+
         int size = route.size();
-        for(int i = 0; i < size - 1; i++ ){
+        for(int i = 0; i < size - 3; i++ ){
             this.length += route.get(i).getLength();
         }
 
@@ -34,19 +41,20 @@ public class Route{
      Get the flying time of the route
      @return flying time in hours
      */
-    public double getFlyingTime(double approachSpeed, double landingSpeed){
+    public double getFlyingTime(Aircraft aircraft){
 
-        double finalLegLength = ((FinalEdge) route.get((route.size()) -1)).getLength(landingSpeed);
+        return  (length/ aircraft.getSpeed()) + arc.getFlyingTime(aircraft) + finalEdge.getFlyingTime(aircraft); // in hours;
+    }
 
-        double timeInHours = (length - finalLegLength)/approachSpeed + finalLegLength / landingSpeed; // in hours;
-        return timeInHours * 3600;
+    public double getLength(Aircraft aircraft){
+        return length + arc.getLength(aircraft) + finalEdge.getLength();
     }
 
     /**
      Get list of Edges of the route (useful to iterate on this route)
      @return List of Edges composing the route (preferably a linkedList to iterate)
      */
-    public List<Edge> getEdges() {
+    public List<? extends Edge> getEdges() {
         return route;
     }
 

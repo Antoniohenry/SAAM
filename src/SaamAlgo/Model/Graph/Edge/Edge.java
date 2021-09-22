@@ -49,6 +49,10 @@ public class Edge {
         return length;
     }
 
+    public double getFlyingTime(Aircraft aircraft){
+        return length / aircraft.getSpeed();
+    }
+
     public TreeMap<Double, IFlight> getFlyingAircraftIn() {
         return flyingAircraftIn;
     }
@@ -70,6 +74,10 @@ public class Edge {
             System.out.println("resultIn = " + resultIn);
             throw new KeyError("The key to add already exists in one of the treemap");
         }
+    }
+
+    public Arc toArc(){
+        return new Arc(getEntryNode(), getExitNode(), name);
     }
 
     public void removeAircraft(double entryTime){

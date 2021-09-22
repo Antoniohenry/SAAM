@@ -2,7 +2,7 @@ package SaamAlgo.Model;
 
 public class SlidingWindowParameters {
 
-    public enum status {COMPLETED, ONGOING, ACTIVE, PLANNED};
+    public enum status {COMPLETED, ONGOING, ACTIVE, PLANNED}
 
     private double initialEntryTMA;
     private final double earliestEntryTMA;
@@ -22,12 +22,15 @@ public class SlidingWindowParameters {
 
     public static SlidingWindowParameters getInstance(Aircraft aircraft){
 
+        double earliestEntry = aircraft.getInitialTimeInTMA() - Constants.deltaTInMin;
+        double latestEntry = aircraft.getInitialTimeInTMA() + Constants.deltaTInMax;
+
         return new SlidingWindowParameters(aircraft.getInitialTimeInTMA(),
-                aircraft.getInitialTimeInTMA() - Constants.deltaTInMin,
-                aircraft.getInitialTimeInTMA() + Constants.deltaTInMax,
+                earliestEntry,
+                latestEntry,
                 aircraft.getTimeOnRunway(),
-                aircraft.getInitialTimeInTMA() + aircraft.getRoute().getFlyingTime(aircraft.getMinimalApproachSpeed(), aircraft.getLandingSpeed()),
-                aircraft.getInitialTimeInTMA() + aircraft.getRoute().getFlyingTime(Constants.nominalApproachSpeed, aircraft.getLandingSpeed()));
+                earliestEntry + aircraft.getRoute().getFlyingTime(aircraft) - Constants.standardTimeInArc,
+                latestEntry + aircraft.getRoute().getFlyingTime(aircraft) + Constants.maxTimeInArc + (aircraft.getSpeed() / aircraft.getMinimalApproachSpeed()) * aircraft.getRoute().getLength(aircraft));
     }
 
     public status getStatus(double startTime, double endTime){

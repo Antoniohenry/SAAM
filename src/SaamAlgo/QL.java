@@ -1,6 +1,7 @@
 package SaamAlgo;
 
 import SaamAlgo.Interface.*;
+import SaamAlgo.Model.Aircraft;
 import SaamAlgo.Model.Constants;
 import SaamAlgo.Model.IQTable;
 
@@ -162,6 +163,13 @@ public class QL {
 
         // data contains whatever has been added all along the algorithm
         //System.out.println("data = " + data);
+
+        StringBuilder results = new StringBuilder();
+        for(IAgent agent : state.getAgents()){
+            results.append(((Aircraft) agent).toDoc()).append('\n');
+        }
+        TextFileWriter.append("Print\\\\Results\\\\results", results.toString());
+
     }
 
 }
