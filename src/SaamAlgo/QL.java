@@ -16,6 +16,8 @@ public class QL {
     public double duration; // computational time
     public double totalReward;
 
+    private String filePath = "Results\\\\";
+
     /**
      * By calling the constructor, a new QL will be runned with the given parameter, and the result will be store in the file 'filePath'
      * @param initialTemperature
@@ -29,9 +31,9 @@ public class QL {
      * @param linear
      * @param rta
      * @param conflict
-     * @param filePath the file where the results1 will be store. The file is create if it doesn't exist. Other results1 are just added at the end of the file.
+     * @param file the file where the results will be store. The file is create if it doesn't exist. Otherwise results are just added at the end of the file.
      */
-    public QL(double initialTemperature, double finalTemperature, double decreasing, int iteration, double threshold, int qInit, double alpha, double gamma, double linear, int rta, int conflict, String filePath){
+    public QL(double initialTemperature, double finalTemperature, double decreasing, int iteration, double threshold, int qInit, double alpha, double gamma, double linear, int rta, int conflict, String file){
 
         long beginning = System.currentTimeMillis();
 
@@ -152,7 +154,7 @@ public class QL {
         System.out.println(str1);
         String toto;
         toto = str.toString();
-        TextFileWriter.append(filePath, toto + str1);
+        TextFileWriter.append(filePath + "total.txt", toto + str1);
 
         totalReward = (double) perf.get(0);
 
@@ -165,7 +167,7 @@ public class QL {
         for(IAgent agent : state.getAgents()){
             results.append(((Aircraft) agent).toDoc()).append('\n');
         }
-        TextFileWriter.append("Print\\\\Results\\\\results2", results.toString());
+        TextFileWriter.append(filePath + file, results.toString());
 
     }
 

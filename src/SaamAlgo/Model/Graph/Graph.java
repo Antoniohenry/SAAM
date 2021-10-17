@@ -26,9 +26,9 @@ public class Graph {
         routes = new LinkedList<>();
 
 
-        getNodesFromFile("DATA1/nodes.txt");
-        getEdgesFromFile("DATA1/links.txt");
-        getRoutesFromFile("DATA1/routes.txt");
+        getNodesFromFile("src/DATA1/nodes.txt");
+        getEdgesFromFile("src/DATA1/links.txt");
+        getRoutesFromFile("src/DATA1/routes.txt");
 
     }
 
