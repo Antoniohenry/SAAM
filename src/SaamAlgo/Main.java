@@ -3,7 +3,7 @@ package SaamAlgo;
 import SaamAlgo.Optimisation.DiscreetGA.DiscreetGA;
 import SaamAlgo.Optimisation.QLearningSweep;
 
-public class Saam {
+public class Main {
 
     public static void main(String[]args) {
 
