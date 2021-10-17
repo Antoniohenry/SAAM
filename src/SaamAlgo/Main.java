@@ -7,6 +7,14 @@ public class Main {
 
     public static void main(String[]args) {
 
+        String file;
+        if (args.length >= 1) {
+            file = args[0];
+        }
+        else {
+            file = "Results";
+        }
+
         //new QLearningSweep();
 
         //new SimulatedAnnealing(100, 1, 0.99, 40, 0.7, 0.3, 1, 60);
@@ -29,7 +37,7 @@ public class Main {
          * @param filePath the file where the results will be store. The file is create if it doesn't exist. Otherwise results are just added at the end of the file.
          */
         for(int i = 0; i < 1; i++) {
-            new QL(4000, 2, 0.990, 65, 0.7, -150, 0.18, 0.9, 0.3, 1, 60, "Result1000000");
+            new QL(5000, 1, 0.993, 75, 0.7, -150, 0.18, 0.9, 0.3, 1, 60, file);
         }
 
     }

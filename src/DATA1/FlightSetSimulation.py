@@ -1,12 +1,17 @@
 import random as rd
 import copy
 from numpy.random import choice
+import sys
 
 # files containing the initial set
 files = ["20170711_26L_ARRIVEES.flights", "20170711_27R_ARRIVEES.flights"]
 
 # Percentage of aircraft to add
-percentage = 1.  # In %, need to be greater than 1
+# In %, need to be greater than 1
+try:
+    percentage = float(sys.argv[1])
+except:
+    percentage = 1.
 
 # new file to write the new flight set into
 result = "simulation.flights"
