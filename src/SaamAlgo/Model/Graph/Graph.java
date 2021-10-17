@@ -6,7 +6,6 @@ import SaamAlgo.Model.Graph.Edge.Edge;
 import SaamAlgo.Model.Graph.Edge.FinalEdge;
 import SaamAlgo.Model.Graph.Node.Node;
 import SaamAlgo.Model.Constants;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -161,7 +160,7 @@ public class Graph {
      Add an aircraft to the graph, to the Nodes and Edges specified in aircraft.getRoute()
      @param aircraft : the aircraft to add
      */
-    public void addAircraft(@NotNull Aircraft aircraft){
+    public void addAircraft(Aircraft aircraft){
         double time = aircraft.getTimeIn();
         aircraft.getEntry().addAircraft(aircraft, time); //ajout de l'avion au point d'entré
         for(Edge edge : aircraft.getRoute().getEdges()){

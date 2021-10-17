@@ -1,5 +1,7 @@
 package SaamAlgo;
 
+import SaamAlgo.Optimisation.DiscreetGA.DiscreetGA;
+import SaamAlgo.Optimisation.QLearningSweep;
 
 public class Saam {
 
@@ -8,8 +10,6 @@ public class Saam {
         //new QLearningSweep();
 
         //new SimulatedAnnealing(100, 1, 0.99, 40, 0.7, 0.3, 1, 60);
-
-        //new SA(1000, 1, 0.99);
 
         //new DiscreetGA(2, 1, 1, 0.2);
 

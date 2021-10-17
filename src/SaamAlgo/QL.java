@@ -1,12 +1,9 @@
 package SaamAlgo;
 
 import SaamAlgo.Interface.*;
-import SaamAlgo.Model.Aircraft;
-import SaamAlgo.Model.Constants;
-import SaamAlgo.Model.IQTable;
+import SaamAlgo.Model.*;
 
-import SaamAlgo.Util.MovingAverage;
-import SaamAlgo.Util.TextFileWriter;
+import SaamAlgo.Util.*;
 
 import java.text.DecimalFormat;
 import java.util.LinkedList;

@@ -21,8 +21,12 @@ public class TextFileWriter {
             fileWriter.close();
         } catch (IOException ex) {
             try {
-                bufWriter.close();
-                fileWriter.close();
+                if (bufWriter != null) {
+                    bufWriter.close();
+                }
+                if (fileWriter != null) {
+                    fileWriter.close();
+                }
             } catch (IOException e) {
                 throw new Error("ecriture dans fichier");
             }
