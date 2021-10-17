@@ -32,7 +32,7 @@ public class QL {
      * @param linear
      * @param rta
      * @param conflict
-     * @param filePath the file where the results will be store. The file is create if it doesn't exist. Other results are just added at the end of the file.
+     * @param filePath the file where the results1 will be store. The file is create if it doesn't exist. Other results1 are just added at the end of the file.
      */
     public QL(double initialTemperature, double finalTemperature, double decreasing, int iteration, double threshold, int qInit, double alpha, double gamma, double linear, int rta, int conflict, String filePath){
 
@@ -149,7 +149,7 @@ public class QL {
 
         List<Number> perf = state.getTotalPerformance(state.getAgents());
 
-        // String representing the QL results, to be write in the result file
+        // String representing the QL results1, to be write in the result file
         StringBuilder str1 = new StringBuilder();
         str1.append(" ").append(df.format(perf.get(0))).append(" ").append(df.format(perf.get(1))).append(" ").append(df.format(perf.get(2))).append(" ").append(perf.get(3)).append(" ").append(perf.get(4)).append(" ").append(df.format(duration));
         System.out.println(str1);
@@ -168,7 +168,7 @@ public class QL {
         for(IAgent agent : state.getAgents()){
             results.append(((Aircraft) agent).toDoc()).append('\n');
         }
-        TextFileWriter.append("Print\\\\Results\\\\results", results.toString());
+        TextFileWriter.append("Print\\\\Results\\\\results2", results.toString());
 
     }
 

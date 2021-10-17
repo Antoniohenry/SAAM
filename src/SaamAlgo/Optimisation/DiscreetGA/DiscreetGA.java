@@ -1,7 +1,8 @@
 package SaamAlgo.Optimisation.DiscreetGA;
 
 import SaamAlgo.QL;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import SaamAlgo.Util.Statistics;
+
 
 import java.util.*;
 
@@ -75,10 +76,10 @@ public class DiscreetGA {
      */
     public double function(int[] parameters){
 
-        SummaryStatistics statistics = new SummaryStatistics();
-        for(int j = 0; j < 1; j++){
+        Statistics statistics = new Statistics();
+        for(int j = 0; j < 5; j++){
             QL ql = new QL(this.parameters[0][parameters[0]], this.parameters[1][parameters[1]], this.parameters[2][parameters[2]], (int) (this.parameters[3][parameters[3]]), this.parameters[4][parameters[4]], (int) this.parameters[5][parameters[5]], this.parameters[6][parameters[6]], this.parameters[7][parameters[7]], this.parameters[8][parameters[8]], (int) this.parameters[9][parameters[9]], (int) this.parameters[10][parameters[10]], filePath);
-            statistics.addValue(ql.totalReward);
+            statistics.add(ql.totalReward);
         }
 
         return statistics.getMean() - statistics.getStandardDeviation() ;

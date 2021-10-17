@@ -2,7 +2,7 @@
 
 Dependencies :
  - Python 3.7.6 with numpy and matplotlib.pyplot
- - Java11 with Java.commons.math3-3.6, Java.commons.lang3-3.12
+ - Java11
  
  To change the size of the flight set (complexity of the scenario)
  - run FlightSetSimulation.py to create a new flight set. The variable percentage changes the size of the flight set in comparison to the initial one.

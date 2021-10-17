@@ -1,6 +1,5 @@
 package SaamAlgo.Optimisation;
 
-import SaamAlgo.Interface.IState;
 import SaamAlgo.QL;
 
 import java.io.FileWriter;

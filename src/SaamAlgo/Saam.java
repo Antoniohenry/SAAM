@@ -1,11 +1,6 @@
 package SaamAlgo;
 
 
-import SaamAlgo.Optimisation.BOBYQAOptimiser.BOBYQAOptimiser;
-import SaamAlgo.Optimisation.DiscreetGA.DiscreetGA;
-import SaamAlgo.Optimisation.QLearningSweep;
-import SaamAlgo.Optimisation.SA.SA;
-
 public class Saam {
 
     public static void main(String[]args) {
@@ -14,15 +9,13 @@ public class Saam {
 
         //new SimulatedAnnealing(100, 1, 0.99, 40, 0.7, 0.3, 1, 60);
 
-        //new BOBYQAOptimiser();
-
         //new SA(1000, 1, 0.99);
 
         //new DiscreetGA(2, 1, 1, 0.2);
 
-
-        new QL(2000, 1, 0.99, 30, 0.7, -150, 0.2, 0.88, 0.3, 1, 60, "Print\\\\Results\\\\total");
-
+        for(int i = 0; i < 1; i++) {
+            new QL(5000, 1, 0.992, 75, 0.7, -150, 0.18, 0.9, 0.3, 1, 60, "Print\\\\Results\\\\total");
+        }
 
     }
 }
