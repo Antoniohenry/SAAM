@@ -74,7 +74,7 @@ public class Graph {
                     edges.put(name, new Arc(nodes.get(entry), nodes.get(exit), name));
                 }
 
-                if(exit.startsWith("RWY")){
+                else if(exit.startsWith("RWY")){
                     edges.put(name, new FinalEdge(nodes.get(entry), nodes.get(exit), name));
                 }
                 else {
@@ -163,10 +163,24 @@ public class Graph {
     public void addAircraft(Aircraft aircraft){
         double time = aircraft.getTimeIn();
         aircraft.getEntry().addAircraft(aircraft, time); //ajout de l'avion au point d'entré
-        for(Edge edge : aircraft.getRoute().getEdges()){
-            edge.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tous les points du parcours sauf l'entré
-            time += edge.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
-            edge.getExitNode().addAircraft(aircraft, time);
+
+        List<? extends Edge> edges = aircraft.getRoute().getEdges();
+        for (int i = 0; i < edges.size(); i++) {
+            if (edges.get(i) instanceof FinalEdge) {
+                FinalEdge finalEdge = (FinalEdge) edges.get(i);
+                finalEdge.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tous les points du parcours sauf l'entré
+                time += finalEdge.getLength() / aircraft.landingSpeed * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                finalEdge.getExitNode().addAircraft(aircraft, time);
+            } else if (edges.get(i) instanceof Arc) {
+                Arc arc = (Arc) edges.get(i);
+                arc.addFlyingAircraft(aircraft, time); //l'avion est ajouté à tous les points du parcours sauf l'entré
+                time += arc.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                arc.getExitNode().addAircraft(aircraft, time);
+            } else {
+                edges.get(i).addFlyingAircraft(aircraft, time); //l'avion est ajouté à tous les points du parcours sauf l'entré
+                time += edges.get(i).getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                edges.get(i).getExitNode().addAircraft(aircraft, time);
+            }
         }
     }
 
@@ -177,11 +191,26 @@ public class Graph {
     public void removeAircraft(Aircraft aircraft){
         double time= aircraft.getTimeIn();
         aircraft.getEntry().removeAircraft(time);
-        for(Edge edge : aircraft.getRoute().getEdges()){
-            edge.removeAircraft(time);
-            time += edge.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC;
-            edge.getExitNode().removeAircraft(time);
+
+        List<? extends Edge> edges = aircraft.getRoute().getEdges();
+        for (int i = 0; i < edges.size(); i++) {
+            if (edges.get(i) instanceof FinalEdge) {
+                FinalEdge finalEdge = (FinalEdge) edges.get(i);
+                finalEdge.removeAircraft(time);
+                time += finalEdge.getLength() / aircraft.landingSpeed * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                finalEdge.getExitNode().removeAircraft(time);
+            } else if (edges.get(i) instanceof Arc) {
+                Arc arc = (Arc) edges.get(i);
+                arc.removeAircraft(time);
+                time += arc.getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                arc.getExitNode().removeAircraft(time);
+            } else {
+                edges.get(i).removeAircraft(time);
+                time += edges.get(i).getLength() / aircraft.getSpeed() * Constants.HOURS_TO_SEC; // temps au passage strict du centre du noeud
+                edges.get(i).getExitNode().removeAircraft(time);
+            }
         }
+
     }
 
     public HashMap<String, Node> getNodes() {

@@ -1,5 +1,12 @@
 package SaamAlgo.Model;
 
+import SaamAlgo.Model.Graph.Edge.Arc;
+import SaamAlgo.Model.Graph.Edge.Edge;
+import SaamAlgo.Model.Graph.Edge.FinalEdge;
+import jdk.dynalink.linker.LinkerServices;
+
+import java.util.List;
+
 public class SlidingWindowParameters {
 
     public enum status {COMPLETED, ONGOING, ACTIVE, PLANNED}
@@ -25,12 +32,31 @@ public class SlidingWindowParameters {
         double earliestEntry = aircraft.getInitialTimeInTMA() - Constants.deltaTInMin;
         double latestEntry = aircraft.getInitialTimeInTMA() + Constants.deltaTInMax;
 
+        double earliestLanding = earliestEntry;
+        double latestLanding = latestEntry;
+
+        List<? extends Edge> edges = aircraft.getRoute().getEdges();
+        for (int i = 0; i < edges.size(); i++) {
+            if (edges.get(i) instanceof FinalEdge) {
+                FinalEdge finalEdge = (FinalEdge) edges.get(i);
+                earliestLanding += finalEdge.getLength() / aircraft.landingSpeed;
+                latestLanding += finalEdge.getLength() / aircraft.landingSpeed;
+            } else if (edges.get(i) instanceof Arc) {
+                Arc arc = (Arc) edges.get(i);
+                earliestLanding += arc.getLength() / aircraft.maxApproachSpeed;
+                latestLanding += (arc.getLength() + Constants.maxPMLength) / aircraft.minApproachSpeed;
+            } else {
+                earliestLanding += edges.get(i).getLength() / aircraft.maxApproachSpeed;
+                latestLanding += edges.get(i).getLength() / aircraft.minApproachSpeed;
+            }
+        }
+
         return new SlidingWindowParameters(aircraft.getInitialTimeInTMA(),
                 earliestEntry,
                 latestEntry,
                 aircraft.getTimeOnRunway(),
-                earliestEntry + aircraft.getRoute().getFlyingTime(aircraft) - Constants.standardTimeInArc,
-                latestEntry + aircraft.getRoute().getFlyingTime(aircraft) + Constants.maxTimeInArc + (aircraft.getSpeed() / aircraft.getMinimalApproachSpeed()) * aircraft.getRoute().getLength(aircraft));
+                earliestLanding,
+                latestLanding);
     }
 
     public status getStatus(double startTime, double endTime){

@@ -18,8 +18,8 @@ public class DiscreetGA {
     private final double[][] parameters = {
             {2500, 3500, 4500, 5500}, //initial temperature
             {1}, //final temperature
-            {0.2}, // decreasing law parameter
-            {80}, // number of iterations
+            {0.95, 0.98, 0.99}, // decreasing law parameter
+            {50, 65, 80}, // number of iterations
             {0.7}, // critical flight set threshold
             {-160, -140, -120, -100}, // Q0, the initial value int he Q table
             {0.15, 0.18, 0.21, 0.24}, // alpha

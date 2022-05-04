@@ -15,8 +15,8 @@ public class Edge {
     private final Node exitNode;
     private final String name;
     private final Double length;
-    private final TreeMap<Double ,IFlight> flyingAircraftIn;
-    private final TreeMap<Double, IFlight> flyingAircraftOut;
+    protected final TreeMap<Double ,IFlight> flyingAircraftIn;
+    protected final TreeMap<Double, IFlight> flyingAircraftOut;
 
 
     public Edge(Node node1, Node node2, String name) {

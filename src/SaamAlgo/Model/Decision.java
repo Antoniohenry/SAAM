@@ -13,15 +13,15 @@ public class Decision implements IDecision {
     private final double speed; // in kt
     private final int deltaTIn; // in sec
     private final Boolean runwayChange;
-    private final double timeInMP; //in seconds
+    private final double arcLength; //in nm
     private final Aircraft.vortexCat aircraftCategory;
     private final Random random = new Random();
 
-    public Decision(double speed, int deltaTIn, Boolean runwayChange, double timeInMP, Aircraft.vortexCat vortexCat){
+    public Decision(double speed, int deltaTIn, Boolean runwayChange, double arcLength, Aircraft.vortexCat vortexCat){
         super();
         this.deltaTIn = deltaTIn;
         this.speed = speed;
-        this.timeInMP = timeInMP;
+        this.arcLength = arcLength;
         this.runwayChange = runwayChange;
         this.aircraftCategory = vortexCat;
     }
@@ -38,41 +38,41 @@ public class Decision implements IDecision {
         return runwayChange;
     }
 
-    public double getTimeInMP() {
-        return timeInMP;
+    public double getArcLength() {
+        return arcLength;
     }
 
     public Decision speedUp(){
-        return new Decision(min(Constants.nominalApproachSpeed, speed + Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
+        return new Decision(min(Constants.nominalApproachSpeed, speed + Constants.speedStep), deltaTIn, runwayChange, arcLength, aircraftCategory);
     }
 
     public Decision speedDown(){
         switch (aircraftCategory){
-            case HEAVY: return new Decision(max(Constants.minimalApproachSpeedH, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
-            case MEDIUM: return new Decision(max(Constants.minimalApproachSpeedM, speed - Constants.speedStep), deltaTIn, runwayChange, timeInMP, aircraftCategory);
+            case HEAVY: return new Decision(max(Constants.minimalApproachSpeedH, speed - Constants.speedStep), deltaTIn, runwayChange, arcLength, aircraftCategory);
+            case MEDIUM: return new Decision(max(Constants.minimalApproachSpeedM, speed - Constants.speedStep), deltaTIn, runwayChange, arcLength, aircraftCategory);
             case LIGHT: throw new Error("the light aircraft model is not implemented yet");
         }
         throw new Error("unable to speed down");
     }
 
     public Decision TMAUp(){
-        return new Decision(speed, min(Constants.deltaTInMax, deltaTIn + Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+        return new Decision(speed, min(Constants.deltaTInMax, deltaTIn + Constants.timeStep), runwayChange, arcLength, aircraftCategory);
     }
 
     public Decision TMADown(){
-        return new Decision(speed, max(Constants.deltaTInMin, deltaTIn - Constants.timeStep), runwayChange, timeInMP, aircraftCategory);
+        return new Decision(speed, max(Constants.deltaTInMin, deltaTIn - Constants.timeStep), runwayChange, arcLength, aircraftCategory);
     }
 
     public Decision runwayChange(){
-        return new Decision(speed, deltaTIn, !runwayChange, timeInMP, aircraftCategory);
+        return new Decision(speed, deltaTIn, !runwayChange, arcLength, aircraftCategory);
     }
 
-    public Decision timeArcUp(){
-        return new Decision(speed, deltaTIn, runwayChange, min(Constants.maxTimeInArc, timeInMP + Constants.timeStep), aircraftCategory);
+    public Decision arcUp(){
+        return new Decision(speed, deltaTIn, runwayChange, min(Constants.maxPMLength, arcLength + Constants.lengthStep), aircraftCategory);
     }
 
-    public Decision timeArcDown(){
-        return new Decision(speed, deltaTIn, runwayChange, max(0, timeInMP - Constants.timeStep), aircraftCategory);
+    public Decision arcDown(){
+        return new Decision(speed, deltaTIn, runwayChange, max(0, arcLength - Constants.lengthStep), aircraftCategory);
     }
 
     @Override
@@ -100,10 +100,10 @@ public class Decision implements IDecision {
 }
         if(0.75 <= nextDouble) {//Change the time in the arc
             if(random.nextBoolean()) { //time in arc up
-                return timeArcUp();
+                return arcUp();
                  }
             else { //time in the arc down
-                return timeArcDown();
+                return arcDown();
                 }
         }
         return null;
@@ -114,7 +114,7 @@ public class Decision implements IDecision {
     }
 
     public static Decision getNeutralDecision(Aircraft.vortexCat vortexCat){
-        return new Decision(Constants.nominalApproachSpeed, 0, false, Constants.standardTimeInArc, vortexCat);
+        return new Decision(Constants.nominalApproachSpeed, 0, false, 0, vortexCat);
     }
 
 
@@ -124,7 +124,7 @@ public class Decision implements IDecision {
                 "speed=" + speed +
                 ", deltaTIn=" + deltaTIn +
                 ", runwayChange=" + runwayChange +
-                ", timeInMP=" + timeInMP +
+                ", arcLength=" + arcLength +
                 '}';
     }
 
@@ -133,12 +133,12 @@ public class Decision implements IDecision {
         if (this == o) return true;
         if (!(o instanceof Decision)) return false;
         Decision decision = (Decision) o;
-        return Double.compare(decision.getSpeed(), getSpeed()) == 0 && getDeltaTIn() == decision.getDeltaTIn() && Double.compare(decision.getTimeInMP(), getTimeInMP()) == 0 && Objects.equals(isRunwayChanged(), decision.isRunwayChanged()) && getCategory() == decision.getCategory();
+        return Double.compare(decision.getSpeed(), getSpeed()) == 0 && getDeltaTIn() == decision.getDeltaTIn() && Double.compare(decision.getArcLength(), getArcLength()) == 0 && Objects.equals(isRunwayChanged(), decision.isRunwayChanged()) && getCategory() == decision.getCategory();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSpeed(), getDeltaTIn(), isRunwayChanged(), getTimeInMP(), getCategory());
+        return Objects.hash(getSpeed(), getDeltaTIn(), isRunwayChanged(), getArcLength(), getCategory());
     }
 
 }

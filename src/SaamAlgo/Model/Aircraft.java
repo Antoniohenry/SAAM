@@ -25,7 +25,7 @@ public class Aircraft implements IAgent{
     private final double rta; // in seconds
     private int vortexCat;
     private final Node preferredRunway;
-    private double timeInArc; //in secs
+    private double arcLength; //in nm
     private Decision decision;
     private final Graph graph;
     private final Node entry;
@@ -35,6 +35,10 @@ public class Aircraft implements IAgent{
     private final List<IConflict> edgeConflicts;
 
     private final SlidingWindowParameters SWParameters;
+
+    public final double maxApproachSpeed;
+    public final double minApproachSpeed;
+    public final double landingSpeed;
 
     private final IQTable q;
 
@@ -46,10 +50,25 @@ public class Aircraft implements IAgent{
         this.graph = graph;
         this.entry = entry;
 
-        switch (vortexCat){
-            case HEAVY: this.vortexCat = 2;break;
-            case MEDIUM: this.vortexCat = 1;break;
-            case LIGHT: this.vortexCat = 0;break;
+        switch (vortexCat) {
+            case HEAVY :
+                this.vortexCat = 2;
+                landingSpeed = Constants.nominalLandingSpeedH;
+                maxApproachSpeed = 250;
+                minApproachSpeed = Constants.minimalApproachSpeedH;
+                break;
+            case MEDIUM :
+                this.vortexCat = 1;
+                landingSpeed = Constants.nominalLandingSpeedM;
+                maxApproachSpeed = 250;
+                minApproachSpeed = Constants.minimalApproachSpeedM;
+                break;
+            default :
+                this.vortexCat = 0;
+                landingSpeed = 80;
+                maxApproachSpeed = 150;
+                minApproachSpeed = 100;
+                break;
         }
 
         this.id = id;
@@ -81,7 +100,7 @@ public class Aircraft implements IAgent{
         speed = Constants.nominalApproachSpeed;
         timeIn -= decision.getDeltaTIn(); // in seconds
         route = graph.getRoute(entry, preferredRunway);
-        timeInArc = Constants.standardTimeInArc;
+        arcLength = 0;
 
         this.decision = null;
 
@@ -125,7 +144,7 @@ public class Aircraft implements IAgent{
         else {
             route = graph.getRoute(entry, preferredRunway);
         }
-        timeInArc = newDecision.getTimeInMP();
+        arcLength = newDecision.getArcLength();
 
         this.decision = newDecision;
         this.graph.addAircraft(this);
@@ -203,10 +222,10 @@ public class Aircraft implements IAgent{
     }
 
     /**
-     * @return in seconds
+     * @return in nm
      */
-    public double getTimeInArc() {
-        return timeInArc;
+    public double getArcLength() {
+        return arcLength;
     }
 
     public IDecision getDecision() {
@@ -251,28 +270,6 @@ public class Aircraft implements IAgent{
 
     public double getInitialTimeInTMA(){
         return timeIn - decision.getDeltaTIn();
-    }
-
-    public double getLandingSpeed(){
-        double speed;
-        switch (vortexCat){
-            case 2 : speed = Constants.nominalLandingSpeedH; break;
-            case 1 : speed = Constants.nominalLandingSpeedM; break;
-            default:
-                throw new IllegalStateException("Unexpected value for wake vortex cat: " + vortexCat);
-        }
-        return speed;
-    }
-
-    public double getMinimalApproachSpeed(){
-        double speed;
-        switch (vortexCat){
-            case 2 : speed = Constants.minimalApproachSpeedH; break;
-            case 1 : speed = Constants.minimalApproachSpeedM; break;
-            default:
-                throw new IllegalStateException("Unexpected value for wake vortex cat: " + vortexCat);
-        }
-        return speed;
     }
 
     public SlidingWindowParameters.status getStatus(double start, double end) {
@@ -334,7 +331,7 @@ public class Aircraft implements IAgent{
                 "id='" + id + '\'' +
                 ", speed=" + speed +
                 ", timeIn=" + timeIn +
-                ", timeInArc=" + timeInArc +
+                ", arcLength=" + arcLength +
                 ", rta=" + rta +
                 ", reward=" + setAndGetReward() +
                 //", vortexCat=" + vortexCat +
@@ -357,7 +354,7 @@ public class Aircraft implements IAgent{
         return id + " " +
         df.format(getTimeIn()) + " " +
                 df.format(getDelayInMin() * 60) + " " +
-                df.format(timeInArc) + " " +
+                df.format(arcLength) + " " +
                 df.format(decision.getDeltaTIn()) + " " +
                 (decision.isRunwayChanged() ? 1 : 0) + " " +
                 df.format(decision.getSpeed()) + " " +

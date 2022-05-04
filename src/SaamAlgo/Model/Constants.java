@@ -10,15 +10,15 @@ public class Constants {
 
     public static double nodeRadius = 2.2; // in nm
 
-    public static double maxTimeInArc = 5. * 60; //in seconds
-    public static double standardTimeInArc = 1. * 60; //in sec
+    public static double maxPMLength = 10; // in nm
+    public static double lengthStep = 0.7; // in nm
 
     public static int nominalApproachSpeed = 250;
     public static int minimalApproachSpeedM = 190; // 1.3 * (101.30 * 1.06) + 50 = 189.59 kt
-    public static int nominalLandingSpeedM = 155; //  1.3 * (101.30 * 1.04) + 20 = 156.95 kt
+    public static int nominalLandingSpeedM = 155; //  1.3 * (101.30 * 1.04) + 20 = 156.95 kt maybe 140
 
     public static int minimalApproachSpeedH = 220; // 1.3 * (122.00 * 1.06) + 50 = 218.11 kt;
-    public static int nominalLandingSpeedH = 185; // 1.3 * (122.00 * 1.04) + 20 = 184.94 kt
+    public static int nominalLandingSpeedH = 185; // 1.3 * (122.00 * 1.04) + 20 = 184.94 kt maybe 165
 
     public static int speedStep = 10; //in kt
 

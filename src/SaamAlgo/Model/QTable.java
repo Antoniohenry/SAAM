@@ -23,9 +23,9 @@ public class QTable implements IQTable {
 
     public QTable(Aircraft aircraft) {
 
-        dimSpeed = (int) ((Constants.nominalApproachSpeed - aircraft.getMinimalApproachSpeed()) / Constants.speedStep) + 1;
+        dimSpeed = (int) ((Constants.nominalApproachSpeed - aircraft.minApproachSpeed) / Constants.speedStep) + 1;
         dimEntryTime = (Constants.deltaTInMax - Constants.deltaTInMin) / Constants.timeStep + 1;
-        dimMP = (int) Constants.maxTimeInArc / Constants.timeStep + 1;
+        dimMP = (int) (Constants.maxPMLength / Constants.lengthStep + 1);
         dimRunway = 2;
 
         q = new double[dimSpeed][dimEntryTime][dimMP][dimRunway][numberOfActionsPossible];
@@ -61,7 +61,7 @@ public class QTable implements IQTable {
 
         int speed = ((int) (decision.getSpeed()) - minimalApproachSpeed) / Constants.speedStep;
         int tma = (decision.getDeltaTIn() - Constants.deltaTInMin) / Constants.timeStep;
-        int mp = (int) (decision.getTimeInMP() / Constants.timeStep);
+        int mp = (int) (decision.getArcLength() / Constants.timeStep);
         int runway;
         if(decision.isRunwayChanged()){
             runway = 1;
@@ -98,10 +98,10 @@ public class QTable implements IQTable {
             case 1 : return oldDecision.speedDown();
             case 2 : return oldDecision.TMAUp();
             case 3 : return oldDecision.TMADown();
-            case 4 : return oldDecision.timeArcUp();
-            case 5 : return oldDecision.timeArcDown();
+            case 4 : return oldDecision.arcUp();
+            case 5 : return oldDecision.arcDown();
             case 6 : return oldDecision.runwayChange();
-            case 7 : return new Decision(oldDecision.getSpeed(), oldDecision.getDeltaTIn(), false, oldDecision.getTimeInMP(), oldDecision.getCategory());
+            case 7 : return new Decision(oldDecision.getSpeed(), oldDecision.getDeltaTIn(), false, oldDecision.getArcLength(), oldDecision.getCategory());
             default: throw new Error("unknown action");
         }
     }
